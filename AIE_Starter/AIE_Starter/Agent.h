@@ -12,8 +12,6 @@ namespace AIForGames {
 
 	class Agent
 	{
-		
-
 	public:
 		enum AgentControlType {
 			OnClick,
@@ -43,6 +41,7 @@ namespace AIForGames {
 		void Reset();
 		void SetColour(Color colour);
 		void SetStateText(const char* text);
+		const char* GetStateText();
 		Color AgentColour();
 		PathAgent GetAgent();
 		Behaviour* GetBehaviour();		

@@ -86,6 +86,20 @@ namespace AIForGames {
 		cellColour.g = 0;
 		cellColour.b = 0;
 
+		// A Raylib color object for the ascii maze node objects (brown)
+		Color cellColour_02;
+		cellColour_02.a = 64;
+		cellColour_02.r = 141;
+		cellColour_02.g = 70;
+		cellColour_02.b = 0;
+
+		// A Raylib color object for the ascii maze node objects (darker brown)
+		Color cellColour_03;
+		cellColour_03.a = 128;
+		cellColour_03.r = 141;
+		cellColour_03.g = 70;
+		cellColour_03.b = 0;
+
 		// A Raylib color object for the ascii maze edge objects (grey)
 		Color lineColour;
 		lineColour.a = 64;
@@ -112,11 +126,11 @@ namespace AIForGames {
 
 						// Debug print the map coordinates of each empty cell (currently too visually busy with pathed cells included)
 #ifndef NDEBUG
-						string coordinateX = to_string(x);
+						/*string coordinateX = to_string(x);
 						string coordinateY = to_string(y);
 						string coordsYX = "(" + coordinateY + ", " + coordinateX + ")";
 						const char* coords = coordsYX.c_str();
-						DrawText(coords, (x * m_cellSize) + 2, (y * m_cellSize) + 2, 1, WHITE);
+						DrawText(coords, (x * m_cellSize) + 2, (y * m_cellSize) + 2, 1, WHITE);*/
 #endif
 					}
 
@@ -126,13 +140,35 @@ namespace AIForGames {
 						for (int i = 0; i < node->connections.size(); i++) {
 							// Create a temporary node pointer that points to each of the nodes connected to this one by an edge
 							Node* other = node->connections[i].targetNode;
-							// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
-							DrawLine(
-								(int)node->position.x,		// line start x
-								(int)node->position.y,		// line start y
-								(int)other->position.x,		// line end x
-								(int)other->position.y,		// line end y
-								lineColour);				// colour
+
+							if (node->connections[i].cost == 1) {
+								// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
+								DrawLine(
+									(int)node->position.x,		// line start x
+									(int)node->position.y,		// line start y
+									(int)other->position.x,		// line end x
+									(int)other->position.y,		// line end y
+									lineColour);				// colour
+							}
+
+							else if (node->connections[i].cost == 2) {
+								DrawLine(
+									(int)node->position.x,		// line start x
+									(int)node->position.y,		// line start y
+									(int)other->position.x,		// line end x
+									(int)other->position.y,		// line end y
+									cellColour_02);				// colour
+							}
+							
+							else if (node->connections[i].cost == 3) {
+								// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
+								DrawLine(
+									(int)node->position.x,		// line start x
+									(int)node->position.y,		// line start y
+									(int)other->position.x,		// line end x
+									(int)other->position.y,		// line end y
+									cellColour_03);				// colour
+							}
 
 #ifndef NDEBUG
 							/*int cellGCost = node->gScore;
@@ -167,7 +203,7 @@ namespace AIForGames {
 
 							/*DrawText(gCost, (x * m_cellSize) + 2, (y * m_cellSize) + 1, 0.5, clr);
 							DrawText(hCostChar, (x * m_cellSize) + 2, (y * m_cellSize) + 16, 0.5, clr);*/
-							DrawText(fCostChar, (x * m_cellSize) + 2, (y * m_cellSize) + 1, 0.5, clr);							
+							DrawText(fCostChar, (x * m_cellSize) + 2, (y * m_cellSize) + 31, 0.5, clr);							
 #endif
 						};
 					};
@@ -230,17 +266,33 @@ namespace AIForGames {
 			}
 
 			for (int x = 0; x < m_width; x++) {
-				// get the x-th character of the y-th row, or else return an empty node if the string isn't long enough
-				char tile = x			// if this (the target tile of this row)...
-					< line.size()		// resolves this as true (true that this cell has yet to be calculated)...
-					? line[x]			// do this (return the x-th character of the y-th row)
-					: emptySquare;		// else do this (leave the target tile empty if we're at the end of the y-th row)
+				//// get the x-th character of the y-th row, or else return an empty node if the string isn't long enough
+				//char tile = x			// if this (the target tile of this row)...
+				//	< line.size()		// resolves this as true (true that this cell has yet to be calculated)...
+				//	? line[x]			// do this (return the x-th character of the y-th row)
+				//	: emptySquare;		// else do this (leave the target tile empty if we're at the end of the y-th row)
 
-				// create a node for anything other than a period character '.'
-				m_nodes[x + m_width * y] = tile		// if this (the target tile)...
-					== emptySquare					// resolves this as true (the target tile is empty [a '0'])...
-					? nullptr						// do this (don't create a node)
-					: new Node(((float)x + 0.5f) * m_cellSize, ((float)y + 0.5f) * m_cellSize);		// else do this (create a node with x & y coordinates of where we have iterated up to in the ascii art map rows and columns, in the middle of its 'cell' [hence the halving of cell size for height and width])
+				//// create a node for anything other than a period character '.'
+				//m_nodes[x + m_width * y] = tile		// if this (the target tile)...
+				//	== emptySquare					// resolves this as true (the target tile is empty [a '0'])...
+				//	? nullptr						// do this (don't create a node)
+				//	: new Node(((float)x + 0.5f) * m_cellSize, ((float)y + 0.5f) * m_cellSize);		// else do this (create a node with x & y coordinates of where we have iterated up to in the ascii art map rows and columns, in the middle of its 'cell' [hence the halving of cell size for height and width])
+				
+				char tile;
+				if (x < line.size()) {
+					tile = line[x];
+				}
+				else {
+					tile = emptySquare;
+				}
+
+				if (tile == emptySquare) {
+					m_nodes[x + m_width * y] = nullptr;
+				}
+				else {
+					m_nodes[x + m_width * y] = new Node(((float)x + 0.5f) * m_cellSize, ((float)y + 0.5f) * m_cellSize);
+				}
+
 				std::cout << "Created node at position:\tColumn (" << x << ")\tRow (" << y << ")." << std::endl;
 			}
 		}
@@ -271,10 +323,13 @@ namespace AIForGames {
 
 					// If it is true that there IS a node to the west (nodeWest is not a nullptr)...
 					if (nodeWest) {
-						// Connect this node to the western node and give it a distance of 1
-						node->ConnectTo(nodeWest, 1);
+						// Connect this node to the western node and give it a distance of 1 (or random distance)
+						//node->ConnectTo(nodeWest, 1);
+						node->ConnectTo(nodeWest, GetRandomValue(1, 3));
+						
 						// Connect the western node to this node and give it a distance of 1
-						nodeWest->ConnectTo(node, 1);
+						//nodeWest->ConnectTo(node, 1);
+						nodeWest->ConnectTo(node, GetRandomValue(1, 3));
 					};
 
 					// Create another temporary node pointer to check whether there is a node to the south, including a check for array over-runs if this is the south-most row
@@ -285,10 +340,12 @@ namespace AIForGames {
 
 					// If it is true that there IS a node to the south (nodeSouth is not a nullptr)...
 					if (nodeSouth) {
-						// Connect this node to the southern node and give it a distance of 1
-						node->ConnectTo(nodeSouth, 1);
-						// Connect the southern node to this node and give it a distance of 1
-						nodeSouth->ConnectTo(node, 1);
+						// Connect this node to the southern node and give it a distance of 1 (or random value)
+						//node->ConnectTo(nodeSouth, 1);
+						node->ConnectTo(nodeSouth, GetRandomValue(1, 3));
+						// Connect the southern node to this node and give it a distance of 1 (or random value)
+						//nodeSouth->ConnectTo(node, 1);
+						nodeSouth->ConnectTo(node, GetRandomValue(1, 3));
 					};
 				};
 			};

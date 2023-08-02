@@ -102,6 +102,10 @@ namespace AIForGames {
 		m_pathAgent.SetStateText(text);
 	}
 
+	const char* Agent::GetStateText() {
+		return m_stateText;
+	}
+
 	Color Agent::AgentColour() {
 		return m_pathAgent.GetColour();
 	}

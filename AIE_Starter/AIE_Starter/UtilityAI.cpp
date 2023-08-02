@@ -54,22 +54,6 @@ namespace AIForGames {
 				currentBehaviour->Enter(agent);
 			}
 		}
-
-		int roundedScore = round(bestEval);
-		std::string e = std::to_string(roundedScore);
-		std::string f;
-
-		// Not working yet
-		// If the chosen Behaviour is to Wander...
-		if (typeid(currentBehaviour) == typeid(temp_01)) {
-			f = "Wandering\n\tWander utility score: " + e;
-		}
-		if (typeid(currentBehaviour) == typeid(temp_02)) {
-			f = "Following\n\tFollow utility score: " + e;
-		}		 
-
-		const char* str = f.c_str();
-		agent->SetStateText(str);
 		
 		// Update now with the highest-scored Behaviour in place
 		currentBehaviour->Update(agent, deltaTime);

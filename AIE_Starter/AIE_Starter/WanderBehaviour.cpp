@@ -13,7 +13,15 @@ namespace AIForGames {
 		// If the Agent's PathAgent has navigated to the end of its path, pick another random node and go there.
 		if (agent->PathComplete()) {
 			// If this agent is NOT being run by the UtilityAI then print this (the UtilityAI has its own printout)
-			if (agent->GetType() != Agent::UtilityAI) {
+			if (agent->GetType() == Agent::UtilityAI) {
+				agent->SetStateText("UAI Wandering");
+			}
+
+			else if (agent->GetType() == Agent::FiniteStateMachine) {
+				agent->SetStateText("FSM Wandering");
+			}
+
+			else {
 				agent->SetStateText("Wandering");
 			}
 

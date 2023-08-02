@@ -15,7 +15,15 @@ namespace AIForGames {
 		// If the distance differs by more than one node, re-calculate the path
 		if (distance > AIForGames::sizeOfCell) {
 			// If this agent is NOT being run by the UtilityAI then print this (the UtilityAI has its own printout)
-			if (agent->GetType() != Agent::UtilityAI) {
+			if (agent->GetType() == Agent::UtilityAI) {
+				agent->SetStateText("UAI Following");
+			}
+
+			else if (agent->GetType() == Agent::FiniteStateMachine) {
+				agent->SetStateText("FSM Following");
+			}
+
+			else {
 				agent->SetStateText("Following");
 			}
 
