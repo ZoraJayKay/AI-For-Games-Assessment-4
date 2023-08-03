@@ -14,15 +14,15 @@ namespace AIForGames {
 		if (agent->PathComplete()) {
 			// If this agent is NOT being run by the UtilityAI then print this (the UtilityAI has its own printout)
 			if (agent->GetType() == Agent::UtilityAI) {
-				agent->SetStateText("UAI Wandering");
+				agent->SetStateText("UAI Wandering\n\t3 sec behaviour refresh");
 			}
 
 			else if (agent->GetType() == Agent::FiniteStateMachine) {
-				agent->SetStateText("FSM Wandering");
+				agent->SetStateText("FSM Wandering\n\tContinuous behaviour refresh");
 			}
 
 			else {
-				agent->SetStateText("Wandering");
+				agent->SetStateText("Wandering\n\tAlways");
 			}
 
 			// Record a random node in the NodeMap

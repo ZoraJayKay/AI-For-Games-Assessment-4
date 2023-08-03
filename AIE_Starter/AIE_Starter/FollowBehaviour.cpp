@@ -12,23 +12,29 @@ namespace AIForGames {
 		// Check the distance between our position and the target agent's current position
 		float distance = glm::distance(agent->GetPosition(), target->GetPosition());
 
+		/*lastTargetPosition = target->GetPosition();
+		agent->GoTo(lastTargetPosition);*/
+
 		// If the distance differs by more than one node, re-calculate the path
-		if (distance > AIForGames::sizeOfCell) {
+		if (distance >= AIForGames::sizeOfCell) {
 			// If this agent is NOT being run by the UtilityAI then print this (the UtilityAI has its own printout)
 			if (agent->GetType() == Agent::UtilityAI) {
-				agent->SetStateText("UAI Following");
+				agent->SetStateText("UAI Following\n\t3 sec behaviour refresh\n\tFollow to last known");
 			}
 
 			else if (agent->GetType() == Agent::FiniteStateMachine) {
-				agent->SetStateText("FSM Following");
+				agent->SetStateText("FSM Following\n\tContinuous behaviour refresh\n\tFollow to last known");
 			}
 
 			else {
-				agent->SetStateText("Following");
+				agent->SetStateText("Following (last pos)\n\tAlways");
 			}
+
+			lastTargetPosition = target->GetPosition();
+			agent->GoTo(lastTargetPosition);
 		}
 
-		if (distance <= AIForGames::sizeOfCell) {
+		else if (distance < AIForGames::sizeOfCell) {
 			if (agent->GetType() == Agent::UtilityAI) {
 				agent->SetStateText("UAI Found player");
 			}
@@ -40,10 +46,10 @@ namespace AIForGames {
 			else {
 				agent->SetStateText("Found player");
 			}
-		}
 
-		lastTargetPosition = target->GetPosition();
-		agent->GoTo(lastTargetPosition);
+			/*lastTargetPosition = target->GetPosition();
+			agent->GoTo(lastTargetPosition);*/
+		}
 	};
 
 	float FollowBehaviour::Evaluate(Agent* agent) {

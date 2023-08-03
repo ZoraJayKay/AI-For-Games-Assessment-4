@@ -5,10 +5,12 @@ namespace AIForGames {
 
 	Agent::Agent(NodeMap* _nodeMap, Behaviour* _behaviour) : m_current(_behaviour), m_nodeMap(_nodeMap), m_colour({ 255, 255, 0, 255 }) {
 		_behaviour->Enter(this);
+		timeInBehaviour = 0;
 	};
 
 	Agent::Agent(NodeMap* _nodeMap, Behaviour* _behaviour, AgentControlType _type) : m_current(_behaviour), m_nodeMap(_nodeMap), m_colour({ 255, 255, 0, 255 }), m_type(_type) {
 		_behaviour->Enter(this);
+		timeInBehaviour = 0;
 	};
 
 	Agent::~Agent() {
@@ -31,7 +33,15 @@ namespace AIForGames {
 	};
 
 	void Agent::Draw() {
-		m_pathAgent.Draw();
+		// For UtilityAI and FSM, draw the agent and its radius
+		if (this->GetType() == UtilityAI || this->GetType() == FiniteStateMachine) {
+			m_pathAgent.DrawWithRange();
+		}
+		
+		// For all others, just draw the agent
+		else {
+			m_pathAgent.Draw();
+		}
 	};
 
 	// A function that finds the nearest node to the given point and calculates a path to it.
@@ -113,4 +123,12 @@ namespace AIForGames {
 	Agent::AgentControlType Agent::GetType() {
 		return m_type;
 	}
+
+	float Agent::GetTimeInBehaviour() {
+		return timeInBehaviour;
+	};
+
+	void Agent::SetTimeInBehaviour(float time) {
+		timeInBehaviour = time;
+	};
 }

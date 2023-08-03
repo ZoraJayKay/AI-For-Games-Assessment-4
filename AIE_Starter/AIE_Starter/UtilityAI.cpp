@@ -2,6 +2,7 @@
 #include "Agent.h"
 #include <string>
 #include <typeinfo>
+#include <iostream>
 
 
 namespace AIForGames {
@@ -26,54 +27,55 @@ namespace AIForGames {
 			currentBehaviour = m_behaviours[0];
 		}
 
-		WanderBehaviour* temp_01;
-		FollowBehaviour* temp_02;
+		// When the shot timer * delta time = 3 (approximately three seconds) update decision making
+		if (agent->GetTimeInBehaviour() * deltaTime >= 3) {
+			std::cout << "3 seconds has passed, update behaviour" << std::endl;
 
-		// The presumed baseline is nil
-		float bestEval = 0;
+			// The presumed baseline is nil
+			float bestEval = 0;
 
-		// Reference pointer for selecting the highest evaluated Behaviour to apply 
-		Behaviour* newBehaviour = nullptr;
+			// Reference pointer for selecting the highest evaluated Behaviour to apply 
+			Behaviour* newBehaviour = nullptr;
 
-		// Evaluate all Behaviours and select the one that is the most suitable (has the highest score)
-		for (Behaviour* b : m_behaviours) {
-			float eval = b->Evaluate(agent);
-			if (eval > bestEval) {
-				bestEval = eval;
-				newBehaviour = b;
+			// Evaluate all Behaviours and select the one that is the most suitable (has the highest score)
+			for (Behaviour* b : m_behaviours) {
+				float eval = b->Evaluate(agent);
+				if (eval > bestEval) {
+					bestEval = eval;
+					newBehaviour = b;
+				}
 			}
+
+			// If the highest non-nil Behaviour differs from the current one...
+			if (newBehaviour != nullptr && newBehaviour != currentBehaviour) {
+				// and so long as the current Behaviour isn't null...
+				if (currentBehaviour) {
+					// Exit the current Behaviour, switch the two, and enter the new Behaviour
+					currentBehaviour->Exit(agent);
+					currentBehaviour = newBehaviour;
+					currentBehaviour->Enter(agent);
+				}
+			}			
+
+			// Reset the counter
+			agent->SetTimeInBehaviour(0);
+			// Update the agent with the highest-scored Behaviour in place
+			currentBehaviour->Update(agent, deltaTime);
 		}
 
-		// If the highest non-nil Behaviour differs from the current one...
-		if (newBehaviour != nullptr && newBehaviour != currentBehaviour) {
-			// and so long as the current Behaviour isn't null...
-			if (currentBehaviour) {
-				// Exit the current Behaviour, switch the two, and enter the new Behaviour
-				currentBehaviour->Exit(agent);
-				currentBehaviour = newBehaviour;
-				currentBehaviour->Enter(agent);
-			}
+		else {
+			// Advance the behaviour recalc timer
+			float newTime = agent->GetTimeInBehaviour() + 1;
+			// Apply the updated timer to the agent
+			agent->SetTimeInBehaviour(newTime);
+			// Continue with whatever the behaviour is
+			currentBehaviour->Update(agent, deltaTime);
 		}
-		
-		// Update now with the highest-scored Behaviour in place
-		currentBehaviour->Update(agent, deltaTime);
 	};
 
 
 	// Improvised function for when the destructor doesn't call because I'm using an Agent object rather than an Agent* - ONLY USED FOR SelectorBehaviour
 	void UtilityAI::DestroyPointers() {};
-
-
-	//// A function for when the Behaviour becomes active
-	//void UtilityAI::Enter(Agent* agent) {};
-
-
-	//// A function for when the Behaviour ceases being active
-	//void UtilityAI::Exit(Agent* agent) {};
-
-
-	//// A function used by UtilityAI to calculate a numerical 'priority 'suitability' score for a given Behaviour that calls this function (0 by default)
-	//float UtilityAI::Evaluate(Agent* agent) { return 0; };
 
 	// A function for adding to the collection of Behaviours of this UtilityAI
 	void UtilityAI::AddBehaviour(Behaviour* behaviour) {

@@ -124,10 +124,19 @@ namespace AIForGames {
 
 	void PathAgent::Draw() {
 		DrawCircle((int)m_position.x, (int)m_position.y, 8, m_agentColour);
-
+		
 		// Draw the current behaviour of this agent below its circular shape
 		DrawText(stateText, (int)m_position.x + 5, (int)m_position.y + 10, 4, m_agentColour);
 	};
+
+	void PathAgent::DrawWithRange() {
+		DrawCircle((int)m_position.x, (int)m_position.y, 8, m_agentColour);
+
+		DrawCircleLines((int)m_position.x, (int)m_position.y, AIForGames::sizeOfCell * 5, m_agentColour);
+
+		// Draw the current behaviour of this agent below its circular shape
+		DrawText(stateText, (int)m_position.x + 5, (int)m_position.y + 10, 4, m_agentColour);
+	}
 
 	void PathAgent::SetAgentCurrentNode(Node* node) {
 		m_currentNode = node;

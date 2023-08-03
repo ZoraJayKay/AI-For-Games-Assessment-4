@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 	DistanceCondition* closerThan5 = new DistanceCondition(5.0f * AIForGames::sizeOfCell, true);
 
 	// Define a DistanceCondition which will be satisfied if two agents are further apart than 7 cells
-	DistanceCondition* fartherThan7 = new DistanceCondition(7.0f * AIForGames::sizeOfCell, true);
+	DistanceCondition* fartherThan7 = new DistanceCondition(7.0f * AIForGames::sizeOfCell, false);
 
 	// Incorporate these states into the FSM
 	// 1: Add Behaviours to the States

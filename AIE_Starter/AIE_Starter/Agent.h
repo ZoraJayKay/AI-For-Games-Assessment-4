@@ -46,6 +46,9 @@ namespace AIForGames {
 		PathAgent GetAgent();
 		Behaviour* GetBehaviour();		
 		AgentControlType GetType();
+		float GetTimeInBehaviour();
+		void SetTimeInBehaviour(float time);
+		
 
 	private:
 		PathAgent m_pathAgent;
@@ -55,5 +58,6 @@ namespace AIForGames {
 		Agent* m_targetAgent;
 		const char* m_stateText;
 		AgentControlType m_type;
+		float timeInBehaviour;
 	};
 }
