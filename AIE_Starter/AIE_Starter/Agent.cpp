@@ -5,12 +5,18 @@ namespace AIForGames {
 
 	Agent::Agent(NodeMap* _nodeMap, Behaviour* _behaviour) : m_current(_behaviour), m_nodeMap(_nodeMap), m_colour({ 255, 255, 0, 255 }) {
 		_behaviour->Enter(this);
+		// Set time in current Behaviour to 0
 		timeInBehaviour = 0;
+		// Give the path agent the node map passed in
+		m_pathAgent.SetMap(m_nodeMap);
 	};
 
 	Agent::Agent(NodeMap* _nodeMap, Behaviour* _behaviour, AgentControlType _type) : m_current(_behaviour), m_nodeMap(_nodeMap), m_colour({ 255, 255, 0, 255 }), m_type(_type) {
 		_behaviour->Enter(this);
+		// Set time in current Behaviour to 0
 		timeInBehaviour = 0;
+		// Give the path agent the node map passed in
+		m_pathAgent.SetMap(m_nodeMap);
 	};
 
 	Agent::~Agent() {
@@ -49,6 +55,14 @@ namespace AIForGames {
 		Node* end = m_nodeMap->GetClosestNode(point);
 		m_nodeMap->ClearMapVals();
 		// On mouse click, set the agent's current node = the nearest node to its current world position
+
+		/*if (m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)) != nullptr) {
+			m_pathAgent.SetAgentCurrentNode(m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)));
+			m_pathAgent.GoToNode(end);
+		}
+		else {
+			m_pathAgent.GoToNode(end);
+		}*/
 		m_pathAgent.SetAgentCurrentNode(m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)));
 		m_pathAgent.GoToNode(end);
 	};

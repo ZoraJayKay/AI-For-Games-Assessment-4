@@ -12,12 +12,8 @@ namespace AIForGames {
 		// Check the distance between our position and the target agent's current position
 		float distance = glm::distance(agent->GetPosition(), target->GetPosition());
 
-		/*lastTargetPosition = target->GetPosition();
-		agent->GoTo(lastTargetPosition);*/
-
 		// If the distance differs by more than one node, re-calculate the path
 		if (distance >= AIForGames::sizeOfCell) {
-			// If this agent is NOT being run by the UtilityAI then print this (the UtilityAI has its own printout)
 			if (agent->GetType() == Agent::UtilityAI) {
 				agent->SetStateText("UAI Following\n\t3 sec behaviour refresh\n\tFollow to last known");
 			}
@@ -46,9 +42,6 @@ namespace AIForGames {
 			else {
 				agent->SetStateText("Found player");
 			}
-
-			/*lastTargetPosition = target->GetPosition();
-			agent->GoTo(lastTargetPosition);*/
 		}
 	};
 

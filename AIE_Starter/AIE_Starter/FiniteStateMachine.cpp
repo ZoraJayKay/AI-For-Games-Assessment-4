@@ -1,6 +1,7 @@
 #include "FiniteStateMachine.h"
 #include "State.h"
 #include "Condition.h"
+#include "Agent.h"
 
 namespace AIForGames {
 	FiniteStateMachine::FiniteStateMachine() {};
@@ -19,32 +20,44 @@ namespace AIForGames {
 	};
 
 	void FiniteStateMachine::Update(Agent* agent, float deltaTime) {
-		// Check all transitions and see if we have a new state that we want to transition to
-		// The new state
-		m_newState = nullptr;
+		// When the time spent in this behaviour is more than * delta time = 1 (approximately one second) update state decision making
+		if (agent->GetTimeInBehaviour() * deltaTime >= 1) {
+			// Check all transitions and see if we have a new state that we want to transition to
+			// The new state
+			m_newState = nullptr;
 
-		// Check all of the Transitions of the the current State
-		for (State::Transition transition : m_currentState->GetTransitions()) {
-			// If the Transition condition is satisfied...
-			if (transition.condition->IsTrue(agent)) {
-				// Then transition to the target State of that Transition
-				m_newState = transition.targetState;
+			// Check all of the Transitions of the the current State
+			for (State::Transition transition : m_currentState->GetTransitions()) {
+				// If the Transition condition is satisfied...
+				if (transition.condition->IsTrue(agent)) {
+					// Then transition to the target State of that Transition
+					m_newState = transition.targetState;
+				}
 			}
+
+			// If we changed state (if newState got set as anything at all)
+			if (m_newState != nullptr) {
+				// 1: Exit the current State
+				m_currentState->Exit(agent);
+
+				// 2: Change current State
+				m_currentState = m_newState;
+
+				// 3: Enter the new State
+				m_currentState->Enter(agent);
+			}
+
+			// Reset the counter
+			agent->SetTimeInBehaviour(0);
 		}
 
-		// If we changed state (if newState got set as anything at all)
-		if (m_newState != nullptr) {
-			// 1: Exit the current State
-			m_currentState->Exit(agent);
-
-			// 2: Change current State
-			m_currentState = m_newState;
-
-			// 3: Enter the new State
-			m_currentState->Enter(agent);
+		else {
+			// Advance the behaviour recalc timer
+			float newTime = agent->GetTimeInBehaviour() + 1;
+			// Apply the updated timer to the agent
+			agent->SetTimeInBehaviour(newTime);
 		}
 
-		// Update the current State of this Agent
 		m_currentState->Update(agent, deltaTime);
 	}
 

@@ -59,8 +59,6 @@ namespace AIForGames {
 
 			// Reset the counter
 			agent->SetTimeInBehaviour(0);
-			// Update the agent with the highest-scored Behaviour in place
-			currentBehaviour->Update(agent, deltaTime);
 		}
 
 		else {
@@ -68,9 +66,9 @@ namespace AIForGames {
 			float newTime = agent->GetTimeInBehaviour() + 1;
 			// Apply the updated timer to the agent
 			agent->SetTimeInBehaviour(newTime);
-			// Continue with whatever the behaviour is
-			currentBehaviour->Update(agent, deltaTime);
 		}
+
+		currentBehaviour->Update(agent, deltaTime);
 	};
 
 

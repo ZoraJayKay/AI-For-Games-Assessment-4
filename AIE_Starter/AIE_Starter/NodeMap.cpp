@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <glm/glm.hpp>
 
 using namespace std;
 
@@ -141,7 +142,7 @@ namespace AIForGames {
 							// Create a temporary node pointer that points to each of the nodes connected to this one by an edge
 							Node* other = node->connections[i].targetNode;
 
-							if (node->connections[i].cost == 1) {
+							if (node->connections[i].cost < 2) {
 								// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
 								DrawLine(
 									(int)node->position.x,		// line start x
@@ -151,7 +152,7 @@ namespace AIForGames {
 									lineColour);				// colour
 							}
 
-							else if (node->connections[i].cost == 2) {
+							else if (node->connections[i].cost < 3) {
 								DrawLine(
 									(int)node->position.x,		// line start x
 									(int)node->position.y,		// line start y
@@ -160,7 +161,7 @@ namespace AIForGames {
 									cellColour_02);				// colour
 							}
 							
-							else if (node->connections[i].cost == 3) {
+							else if (node->connections[i].cost >= 3) {
 								// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
 								DrawLine(
 									(int)node->position.x,		// line start x
@@ -324,12 +325,12 @@ namespace AIForGames {
 					// If it is true that there IS a node to the west (nodeWest is not a nullptr)...
 					if (nodeWest) {
 						// Connect this node to the western node and give it a distance of 1 (or random distance)
-						//node->ConnectTo(nodeWest, 1);
-						node->ConnectTo(nodeWest, GetRandomValue(1, 3));
+						node->ConnectTo(nodeWest, 1);
+						//node->ConnectTo(nodeWest, GetRandomValue(1, 3));
 						
 						// Connect the western node to this node and give it a distance of 1
-						//nodeWest->ConnectTo(node, 1);
-						nodeWest->ConnectTo(node, GetRandomValue(1, 3));
+						nodeWest->ConnectTo(node, 1);
+						//nodeWest->ConnectTo(node, GetRandomValue(1, 3));
 					};
 
 					// Create another temporary node pointer to check whether there is a node to the south, including a check for array over-runs if this is the south-most row
@@ -341,12 +342,44 @@ namespace AIForGames {
 					// If it is true that there IS a node to the south (nodeSouth is not a nullptr)...
 					if (nodeSouth) {
 						// Connect this node to the southern node and give it a distance of 1 (or random value)
-						//node->ConnectTo(nodeSouth, 1);
-						node->ConnectTo(nodeSouth, GetRandomValue(1, 3));
+						node->ConnectTo(nodeSouth, 1);
+						//node->ConnectTo(nodeSouth, GetRandomValue(1, 3));
 						// Connect the southern node to this node and give it a distance of 1 (or random value)
-						//nodeSouth->ConnectTo(node, 1);
-						nodeSouth->ConnectTo(node, GetRandomValue(1, 3));
+						nodeSouth->ConnectTo(node, 1);
+						//nodeSouth->ConnectTo(node, GetRandomValue(1, 3));
 					};
+
+					// Create another temporary node pointer to check whether there is a node to the south-west, including a check for array over-runs if this is the west-most column
+					Node* nodeSouthWest = (x == 0 || y == 0)	// If x & y both = 0...
+						? nullptr								// Make nodeSouthWest a nullptr
+						: GetNode(x - 1, y - 1);				// Else get the node to the south-west
+
+					// If it is true that there IS a node to the south-west (nodeSouthWest is not a nullptr)...
+					if (nodeSouthWest) {
+						// Connect this node to the southern node and give it a distance of 1 (or random value)
+						node->ConnectTo(nodeSouthWest, 1);
+						//node->ConnectTo(nodeSouthWest, GetRandomValue(1, 3) * 1.414f);
+
+						// Connect the south-western node to this node and give it a distance of 1 (or random value)
+						nodeSouthWest->ConnectTo(node, 1);
+						//nodeSouthWest->ConnectTo(node, GetRandomValue(1, 3) * 1.414f);
+					}
+
+					// Create another temporary node pointer to check whether there is a node to the south-east, including a check for array over-runs if this is the east-most column
+					Node* nodeSouthEast = (x == m_width-1 || y == 0)	// If x & y both = 0...
+						? nullptr								// Make nodeSouthWest a nullptr
+						: GetNode(x + 1, y - 1);				// Else get the node to the south-west
+
+					// If it is true that there IS a node to the south-west (nodeSouthWest is not a nullptr)...
+					if (nodeSouthEast) {
+						// Connect this node to the southern node and give it a distance of 1 (or random value)
+						node->ConnectTo(nodeSouthEast, 1);
+						//node->ConnectTo(nodeSouthEast, GetRandomValue(1, 3) * 1.414f);
+
+						// Connect the south-western node to this node and give it a distance of 1 (or random value)
+						nodeSouthEast->ConnectTo(node, 1);
+						//nodeSouthEast->ConnectTo(node, GetRandomValue(1, 3) * 1.414f);
+					}
 				};
 			};
 		};
@@ -647,5 +680,83 @@ namespace AIForGames {
 		}
 
 		return path;
+	};
+
+	// A function for returning whether it is true that there are no null pointer tiles between two points
+	bool NodeMap::IsVisibleFrom(Node* start, Node* end) {
+#ifndef NDEBUG
+		cout << "Visibility check started" << std::endl;
+		Vector2 mousePos = GetMousePosition();
+		cout << "Started at (" << start->position.x << " , " << start->position.y << ")" << std::endl;
+		cout << "Clicked on (" << mousePos.x << " , " << mousePos.y << ")" << std::endl;
+#endif
+		// Determine the Cartesian distances between points
+		int xDistance = 0;
+		int yDistance = 0;
+		
+
+		xDistance = end->position.x - start->position.x;
+		yDistance = end->position.y - start->position.y;
+		
+		// Make a vector that points from the start to the end
+		glm::vec2 delta = { xDistance, yDistance };
+
+		// Calculate the distance from start to end (this is the vector's magnitude [the square root of its coordinates squared])
+		float distance = sqrt(
+			(delta.x * delta.x) +
+			(delta.y * delta.y));
+
+		// Scale the vector so that it equals the size of one cell
+		/*delta.x = delta.x / (distance / AIForGames::sizeOfCell);
+		delta.y = delta.y / (distance / AIForGames::sizeOfCell);*/
+
+		delta.x = delta.x / distance * (distance / AIForGames::sizeOfCell);
+		delta.y = delta.y / distance * (distance / AIForGames::sizeOfCell);
+
+		// Evaluate each cell one at a time toward to the end until the end has been reached
+		for (float cells = 1.0f; cells < distance / AIForGames::sizeOfCell; cells += 1.0f) {
+			glm::vec2 testPosition = { 
+				start->position.x + (delta.x * cells), 
+				start->position.y + (delta.y * cells)
+			};
+
+			// If the test position lands on a null pointer we've hit an obstacle
+			if (GetClosestNode(testPosition) == nullptr) {
+#ifndef NDEBUG
+				
+				cout << "testPosition calculated (" << testPosition.x << " , " << testPosition.y << ")" << std::endl;
+				cout << "Visibility check ended, returned FALSE" << std::endl;
+#endif
+				
+				return false;
+			}
+		}
+
+#ifndef NDEBUG
+		cout << "Visibility check ended, returned TRUE" << std::endl;
+#endif
+		// Otherwise the path is clear - return true
+		return true;
+	};
+
+	// A function for return a path of only two nodes if there is a clear line of sight between them
+	std::vector<Node*> NodeMap::SmoothPath(std::vector<Node*> path) {
+		if (path.empty() == true) {
+			return path;
+		}
+
+		Node* first = path[0];
+		Node* last = path[path.size()-1];
+
+
+		if (IsVisibleFrom(first, last) == true) {
+			vector<Node*> newPath;
+			newPath.push_back(first);
+			newPath.push_back(last);
+
+			return newPath;
+		}
+
+		return path;		
 	};
 };

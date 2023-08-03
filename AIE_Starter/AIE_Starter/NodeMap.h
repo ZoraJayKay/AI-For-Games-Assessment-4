@@ -60,5 +60,11 @@ namespace AIForGames {
 
 		// A function for randomly selecting a node from the node map
 		Node* GetRandomNode();
+
+		// A function for returning whether it is true that there are no null pointer tiles between two points
+		bool IsVisibleFrom(Node* start, Node* end);
+
+		// A function for return a path of only two nodes if there is a clear line of sight between them
+		std::vector<Node*> SmoothPath(std::vector<Node*> path);
 	};
 }

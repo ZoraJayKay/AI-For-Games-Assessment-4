@@ -87,7 +87,7 @@ namespace AIForGames {
 			if (itr != m_path.end()) {
 				std::cout << "Path end not yet reached, continuing." << std::endl;
 				// Update the 'current' node
-				SetNode(m_path[m_currentIndex]);
+				//SetNode(m_path[m_currentIndex]);
 
 				// Then distance with the subtracted speed * deltaTime tells us how far we've overshot the node if we invert it.
 				int overshoot = (distance - (m_speed * deltaTime));
@@ -118,6 +118,11 @@ namespace AIForGames {
 	void PathAgent::GoToNode(Node* node) {
 		// Call the pathfinding function to make and store a path from the current node to the given destination
 		m_path = NodeMap::AStarSearch(m_currentNode, node);
+
+		//if (!m_path.empty()) {
+			m_path = nodeMap->SmoothPath(m_path);
+		//}
+		
 		// When we recalculate the path our next node is always the first one along the path, so we reset currentIndex to 0.
 		m_currentIndex = 0;
 	};
@@ -167,4 +172,12 @@ namespace AIForGames {
 	Color PathAgent::GetColour() {
 		return m_agentColour;
 	}
+
+	void PathAgent::SetMap(NodeMap* newMap) {
+		nodeMap = newMap;
+	}
+
+	NodeMap* PathAgent::GetMap() {
+		return nodeMap;
+	};
 }
