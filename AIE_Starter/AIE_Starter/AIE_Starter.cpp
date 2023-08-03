@@ -263,10 +263,14 @@ int main(int argc, char* argv[])
 	CloseWindow();        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 
+	// To delete SelectorBehaviour's pointers (unclear why the destructor won't do this...?)
 	agent_03.GetBehaviour()->DestroyPointers();
 
 	delete fsm;
 	fsm = nullptr;
+
+	delete utilityAI;
+	utilityAI = nullptr;
 
 	delete map;
 	map = nullptr;	

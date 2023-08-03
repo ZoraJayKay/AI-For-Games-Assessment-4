@@ -26,10 +26,24 @@ namespace AIForGames {
 			else {
 				agent->SetStateText("Following");
 			}
-
-			lastTargetPosition = target->GetPosition();
-			agent->GoTo(lastTargetPosition);
 		}
+
+		if (distance <= AIForGames::sizeOfCell) {
+			if (agent->GetType() == Agent::UtilityAI) {
+				agent->SetStateText("UAI Found player");
+			}
+
+			else if (agent->GetType() == Agent::FiniteStateMachine) {
+				agent->SetStateText("FSM Found player");
+			}
+
+			else {
+				agent->SetStateText("Found player");
+			}
+		}
+
+		lastTargetPosition = target->GetPosition();
+		agent->GoTo(lastTargetPosition);
 	};
 
 	float FollowBehaviour::Evaluate(Agent* agent) {
