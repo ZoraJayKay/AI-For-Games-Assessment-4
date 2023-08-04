@@ -28,19 +28,30 @@ namespace AIForGames {
 			return;
 		}
 		
-		if (GetMap()->GetClosestNode(GetAgentPosition()) != nullptr && GetMap()->GetClosestNode(GetAgentPosition()) != m_path.back()) {
-				m_currentNode = GetMap()->GetClosestNode(GetAgentPosition());
+		// If the closest node is a null pointer, or it is the last node in the path, don't update the current node, otherwise do
+		if (GetMap()->GetClosestNode(GetAgentPosition()) != nullptr && 
+			GetMap()->GetClosestNode(GetAgentPosition()) != m_path.back()) {
+				SetAgentCurrentNode(GetMap()->GetClosestNode(GetAgentPosition()));
 		}
 
+		// 1: Calculate a vector from the position of the next node to our current position (actual position, not node position)
 		int xDistance = 0;
 		int yDistance = 0;
 		
-		xDistance = m_path[m_currentIndex + 1]->position.x - m_position.x;
-		yDistance = m_path[m_currentIndex + 1]->position.y - m_position.y;
-		
-		
-		glm::vec2 directionVector = {xDistance, yDistance};
+		// If we're only moving one node and this path has never been updated before (it has never had a chance to hit the path end condition further below)
+		if (m_path.front() == m_path.back()) {
+			xDistance = m_path.back()->position.x - m_position.x;
+			yDistance = m_path.back()->position.y - m_position.y;
+		}
 
+		// Otherwise calculate normally
+		else {
+			xDistance = m_path[m_currentIndex + 1]->position.x - m_position.x;
+			yDistance = m_path[m_currentIndex + 1]->position.y - m_position.y;
+		}
+
+		glm::vec2 directionVector = {xDistance, yDistance};
+		
 		// 2.a.ii: Calculate the distance (the vector's magnitude [square root of its coordinates squared])
 		int distance = sqrt(
 			(directionVector.x * directionVector.x) +
@@ -65,12 +76,6 @@ namespace AIForGames {
 			// 3: Otherwise, we've overshot the node.
 			// 3.a.i: Add one to currentIndex.
 			m_currentIndex += 1;
-
-			// TEST
-			
-			
-			//m_currentNode = m_path[m_currentIndex];
-			//SetNode(m_path[m_currentIndex]);
 
 			std::vector<Node*>::iterator itr = find(m_path.begin(), m_path.end(), m_path[m_currentIndex]);
 			std::cout << "Passed node " << m_currentIndex << std::endl;
@@ -97,8 +102,11 @@ namespace AIForGames {
 				int overshoot = (distance - (m_speed * deltaTime));
 
 				// Find the unit vector from our previous node to the new next node...
-				xDistance = m_path[m_currentIndex + 1]->position.x - m_path[m_currentIndex - 1]->position.x;
-				yDistance = m_path[m_currentIndex + 1]->position.y - m_path[m_currentIndex - 1]->position.y;
+				/*xDistance = m_path[m_currentIndex + 1]->position.x - m_path[m_currentIndex - 1]->position.x;
+				yDistance = m_path[m_currentIndex + 1]->position.y - m_path[m_currentIndex - 1]->position.y;*/
+
+				xDistance = m_path[m_currentIndex + 1]->position.x - m_position.x;
+				yDistance = m_path[m_currentIndex + 1]->position.y - m_position.y;
 
 				// Refresh vector
 				directionVector = { xDistance, yDistance };

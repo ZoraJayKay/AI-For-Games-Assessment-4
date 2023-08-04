@@ -14,43 +14,21 @@ namespace AIForGames {
 
 		// If the distance differs by more than one node, re-calculate the path
 		if (distance > AIForGames::sizeOfCell) {
-			if (agent->GetType() == Agent::UtilityAI) {
-				agent->SetStateText("UAI Following\n\t3 sec behaviour refresh\n\tFollow to last known");
-			}
-
-			else if (agent->GetType() == Agent::FiniteStateMachine) {
-				agent->SetStateText("FSM Following\n\tContinuous behaviour refresh\n\tFollow to last known");
-			}
-
-			else {
-				agent->SetStateText("Following (last pos)\n\tAlways");
-			}
-
-			lastTargetPosition = target->GetPosition();
-			agent->GoTo(lastTargetPosition);		
-		}
-
-		else if (distance <= AIForGames::sizeOfCell) {
-			//agent->GoTo(target->GetPosition());
-
-			if (agent->GetType() == Agent::UtilityAI) {
-				agent->SetStateText("UAI Found player");
-			}
-
-			else if (agent->GetType() == Agent::FiniteStateMachine) {
-				agent->SetStateText("FSM Found player");
-			}
-
-			else {
-				agent->SetStateText("Found player");
-			}
-
 			lastTargetPosition = target->GetPosition();
 			agent->GoTo(lastTargetPosition);
 		}
 
-		lastTargetPosition = target->GetPosition();
-		agent->GoTo(lastTargetPosition);
+		if (agent->GetType() == Agent::UtilityAI) {
+			agent->SetStateText("UAI Following\n\tBehaviour refresh per 3 sec\n\tFollow to last known");
+		}
+
+		else if (agent->GetType() == Agent::FiniteStateMachine) {
+			agent->SetStateText("FSM Following\n\tBehaviour refresh per 1 sec\n\tFollow to last known");
+		}
+
+		else {
+			agent->SetStateText("Following\n\tContinuously");
+		}
 	};
 
 	float FollowBehaviour::Evaluate(Agent* agent) {

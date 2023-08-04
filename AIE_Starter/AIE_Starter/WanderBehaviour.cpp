@@ -14,11 +14,11 @@ namespace AIForGames {
 		if (agent->PathComplete()) {
 			// If this agent is NOT being run by the UtilityAI then print this (the UtilityAI has its own printout)
 			if (agent->GetType() == Agent::UtilityAI) {
-				agent->SetStateText("UAI Wandering\n\t3 sec behaviour refresh");
+				agent->SetStateText("UAI Wandering\n\tBehaviour refresh per 3 sec");
 			}
 
 			else if (agent->GetType() == Agent::FiniteStateMachine) {
-				agent->SetStateText("FSM Wandering\n\tContinuous behaviour refresh");
+				agent->SetStateText("FSM Wandering\n\tBehaviour refresh per 1 sec");
 			}
 
 			else {

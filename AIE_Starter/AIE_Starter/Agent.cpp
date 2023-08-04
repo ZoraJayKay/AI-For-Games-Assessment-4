@@ -37,7 +37,7 @@ namespace AIForGames {
 
 	void Agent::Draw() {
 		// For UtilityAI and FSM, draw the agent and its radius
-		if (this->GetType() == UtilityAI || this->GetType() == FiniteStateMachine) {
+		if (this->GetType() == UtilityAI || this->GetType() == FiniteStateMachine || this->GetType() == BehaviourSelector) {
 			m_pathAgent.DrawWithRange();
 		}
 		
@@ -50,21 +50,7 @@ namespace AIForGames {
 	// A function that finds the nearest node to the given point and calculates a path to it.
 	void Agent::GoTo(glm::vec2 point) {
 		Node* end = m_nodeMap->GetClosestNode(point);
-#ifndef NDEBUG
-		m_nodeMap->ClearMapVals();
-#endif
-		/*if (end != nullptr && m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)) != nullptr) {
-			m_pathAgent.SetAgentCurrentNode(m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)));
-			m_pathAgent.GoToNode(end);
-		}*/
-		//// On mouse click, set the agent's current node = the nearest node to its current world position (so long as that isn't a null pointer)
-		//if (m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)) != nullptr) {
-		//	m_pathAgent.SetAgentCurrentNode(m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)));
-		//	m_pathAgent.GoToNode(end);
-		//}
-		//else {
 		m_pathAgent.GoToNode(end);
-		//}
 	};
 
 	// A function for setting the physical location of the PathAgent inside this Agent

@@ -26,7 +26,7 @@ namespace AIForGames {
 		if (glm::distance(agent->GetPosition(), agent->GetTarget()->GetPosition()) < (AIForGames::sizeOfCell * 5)) {
 			// Change the agent's behaviour to the first saved option
 			SetBehaviour(m_b1, agent);
-			agent->SetStateText("Found player");
+			agent->SetStateText("Selector Found Player");
 			agent->SetColour(RED);
 			agent->SetSpeed(48);
 		}
@@ -34,7 +34,7 @@ namespace AIForGames {
 		else {
 			// Change the agent's behaviour to the second saved option
 			SetBehaviour(m_b2, agent);
-			agent->SetStateText("Patrolling");
+			agent->SetStateText("Selector Wandering\n\tBehaviour refresh constant");
 			agent->SetColour(GREEN);
 			agent->SetSpeed(32);
 		}

@@ -59,7 +59,8 @@ int main(int argc, char* argv[])
 	
 	vector<string> asciiMap;
 
-	// 25x17 grid of chars denoting whether or not a cell is navigable (1) or impassable (0) /// ALTERNATE MAP
+	// 25x17 grid of chars denoting whether or not a cell is navigable (1) or impassable (0)
+	// ************************************* OPEN SPACE MAP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	asciiMap.push_back("0000000000000000000000000");     // row 1
 	asciiMap.push_back("0111111111111111111111110");     // row 2
 	asciiMap.push_back("0110111111111111111111110");     // row 3
@@ -78,6 +79,7 @@ int main(int argc, char* argv[])
 	asciiMap.push_back("0111111111111111111111110");     // row 16
 	asciiMap.push_back("0000000000000000000000000");     // row 17
 	
+	// ************************************* CLOSED SPACE MAP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	//asciiMap.push_back("0000000000000000000000000");     // row 1
 	//asciiMap.push_back("0101110111000011100111100");     // row 2
 	//asciiMap.push_back("0101011101111110111100110");     // row 3
@@ -143,18 +145,18 @@ int main(int argc, char* argv[])
 	player.SetSpeed(64);
 	player.SetNode(start);
 	
-	// An agent for wandering the map randomly
-	Agent agent_behaviour_01(map, new WanderBehaviour(), Agent::SingleBehaviour);
-	agent_behaviour_01.SetColour(DARKGREEN);
-	agent_behaviour_01.SetSpeed(64);
-	agent_behaviour_01.SetNode(map->GetRandomNode());
+	//// An agent for wandering the map randomly
+	//Agent agent_behaviour_01(map, new WanderBehaviour(), Agent::SingleBehaviour);
+	//agent_behaviour_01.SetColour(DARKGREEN);
+	//agent_behaviour_01.SetSpeed(64);
+	//agent_behaviour_01.SetNode(map->GetRandomNode());
 
-	// An agent for following the player
-	Agent agent_behaviour_02(map, new FollowBehaviour(), Agent::SingleBehaviour);
-	agent_behaviour_02.SetColour(BLUE);
-	agent_behaviour_02.SetSpeed(48);
-	agent_behaviour_02.SetTarget(&player);
-	agent_behaviour_02.SetNode(map->GetRandomNode());
+	//// An agent for following the player
+	//Agent agent_behaviour_02(map, new FollowBehaviour(), Agent::SingleBehaviour);
+	//agent_behaviour_02.SetColour(BLUE);
+	//agent_behaviour_02.SetSpeed(48);
+	//agent_behaviour_02.SetTarget(&player);
+	//agent_behaviour_02.SetNode(map->GetRandomNode());
 
 	// An agent that switches its behaviour subject to proximity with the player
 	Agent agent_03(map, new SelectorBehaviour(new FollowBehaviour(), new WanderBehaviour()), Agent::BehaviourSelector);
@@ -203,24 +205,24 @@ int main(int argc, char* argv[])
 
 		// Draw a line that shows the current path of the PathAgent inside the Agent that is passed in
 		map->DrawPath(player.GetPath(), YELLOW);
-		map->DrawPath(agent_behaviour_01.GetPath(), DARKGREEN);
-		map->DrawPath(agent_behaviour_02.GetPath(), DARKBLUE);
+		/*map->DrawPath(agent_behaviour_01.GetPath(), DARKGREEN);
+		map->DrawPath(agent_behaviour_02.GetPath(), DARKBLUE);*/
 		map->DrawPath(agent_03.GetPath(), agent_03.AgentColour());
 		map->DrawPath(agent_fsm.GetPath(), agent_fsm.AgentColour());
 		map->DrawPath(agent_utility.GetPath(), agent_utility.AgentColour());
 
 		// Update the behaviour of the Agent that encapsulates the PathAgent
 		player.Update(deltaTime);
-		agent_behaviour_01.Update(deltaTime);
-		agent_behaviour_02.Update(deltaTime);
+		/*agent_behaviour_01.Update(deltaTime);
+		agent_behaviour_02.Update(deltaTime);*/
 		agent_03.Update(deltaTime);
 		agent_fsm.Update(deltaTime);
 		agent_utility.Update(deltaTime);
 
 		// Draw the PathAgent inside of the Agent
 		player.Draw();
-		agent_behaviour_01.Draw();
-		agent_behaviour_02.Draw();
+		/*agent_behaviour_01.Draw();
+		agent_behaviour_02.Draw();*/
 		agent_03.Draw();
 		agent_fsm.Draw();
 		agent_utility.Draw();
@@ -282,8 +284,8 @@ int main(int argc, char* argv[])
 
 	// To delete SelectorBehaviour's pointers (unclear why the destructor won't do this...?)
 	delete player.GetBehaviour();
-	delete agent_behaviour_01.GetBehaviour();
-	delete agent_behaviour_02.GetBehaviour();
+	/*delete agent_behaviour_01.GetBehaviour();
+	delete agent_behaviour_02.GetBehaviour();*/
 	agent_03.GetBehaviour()->DestroyPointers();
 	delete agent_03.GetBehaviour();
 

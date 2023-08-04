@@ -461,25 +461,24 @@ namespace AIForGames {
 			// Return an empty path
 			return path;
 		}
-
-		// 
-		else if (startNode == endNode) {
-#ifndef NDEBUG
-			cout << "Start and end are same - path is complete." << endl;
-#endif
-			// Return an empty path
-			return path;
-		}
-
-#ifndef NDEBUG
-		// 
-		else {
-			cout << "Start and end both exist, and are different. Continue." << endl;
-		}
+//
+//		else if (startNode == endNode) {
+//#ifndef NDEBUG
+//			cout << "Start and end are same - path is complete." << endl;
+//#endif
+//			// Return an empty path
+//			return path;
+//		}
+//
+//#ifndef NDEBUG
+//		// 
+//		else {
+//			cout << "Start and end both exist, and are different. Continue." << endl;
+//		}
 
 		//	2	----------------------------------------------------------------------------------------------------
 		cout << "Step 2: Initialise the starting node." << endl;
-#endif
+//#endif
 
 		// Set distance from the starting node = 0.
 		startNode->gScore = 0;
@@ -710,14 +709,14 @@ namespace AIForGames {
 			(directionVector.y * directionVector.y));
 
 		// 1.4: Scale the direction vector to be equal in size to one cell
-		glm::vec2 quarterCellSizedVector;
-		quarterCellSizedVector.x = directionVector.x * ((AIForGames::sizeOfCell / 4) / distance);
-		quarterCellSizedVector.y = directionVector.y * ((AIForGames::sizeOfCell / 4) / distance);
+		glm::vec2 fifthCellSizedVector;
+		fifthCellSizedVector.x = directionVector.x * ((AIForGames::sizeOfCell / 5) / distance);
+		fifthCellSizedVector.y = directionVector.y * ((AIForGames::sizeOfCell / 5) / distance);
 
 		// Evaluate each cell one at a time toward to the end until the end has been reached
-		for (float cells = 1.0f; cells < (distance / (AIForGames::sizeOfCell / 4)); cells += 1.0f) {
-			float x = (quarterCellSizedVector.x * cells);
-			float y = (quarterCellSizedVector.y * cells);
+		for (float cells = 1.0f; cells < (distance / (AIForGames::sizeOfCell / 5)); cells += 1.0f) {
+			float x = (fifthCellSizedVector.x * cells);
+			float y = (fifthCellSizedVector.y * cells);
 
 			glm::vec2 testPosition = { 
 				start->position.x + x,
