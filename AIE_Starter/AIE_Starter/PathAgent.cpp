@@ -28,8 +28,8 @@ namespace AIForGames {
 			return;
 		}
 		
-		if (GetMap()->GetClosestNode(GetAgentPosition()) != nullptr) {
-			m_currentNode = GetMap()->GetClosestNode(GetAgentPosition());
+		if (GetMap()->GetClosestNode(GetAgentPosition()) != nullptr && GetMap()->GetClosestNode(GetAgentPosition()) != m_path.back()) {
+				m_currentNode = GetMap()->GetClosestNode(GetAgentPosition());
 		}
 
 		int xDistance = 0;
@@ -123,9 +123,9 @@ namespace AIForGames {
 		// Call the pathfinding function to make and store a path from the current node to the given destination
 		m_path = NodeMap::AStarSearch(m_currentNode, node);
 
-		/*if (!m_path.empty()) {
+		if (!m_path.empty()) {
 			m_path = nodeMap->SmoothPath(m_path);
-		}*/
+		}
 		
 		// When we recalculate the path our next node is always the first one along the path, so we reset currentIndex to 0.
 		m_currentIndex = 0;

@@ -710,14 +710,14 @@ namespace AIForGames {
 			(directionVector.y * directionVector.y));
 
 		// 1.4: Scale the direction vector to be equal in size to one cell
-		glm::vec2 cellSizedVector;
-		cellSizedVector.x = directionVector.x * (AIForGames::sizeOfCell / distance);
-		cellSizedVector.y = directionVector.y * (AIForGames::sizeOfCell / distance);
+		glm::vec2 quarterCellSizedVector;
+		quarterCellSizedVector.x = directionVector.x * ((AIForGames::sizeOfCell / 4) / distance);
+		quarterCellSizedVector.y = directionVector.y * ((AIForGames::sizeOfCell / 4) / distance);
 
 		// Evaluate each cell one at a time toward to the end until the end has been reached
-		for (float cells = 1.0f; cells < (distance / AIForGames::sizeOfCell); cells += 1.0f) {
-			float x = (cellSizedVector.x * cells);
-			float y = (cellSizedVector.y * cells);
+		for (float cells = 1.0f; cells < (distance / (AIForGames::sizeOfCell / 4)); cells += 1.0f) {
+			float x = (quarterCellSizedVector.x * cells);
+			float y = (quarterCellSizedVector.y * cells);
 
 			glm::vec2 testPosition = { 
 				start->position.x + x,
