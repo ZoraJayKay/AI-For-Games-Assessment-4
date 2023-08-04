@@ -19,10 +19,7 @@ namespace AIForGames {
 		m_pathAgent.SetMap(m_nodeMap);
 	};
 
-	Agent::~Agent() {
-		delete m_current;
-		m_current = nullptr;
-	};
+	Agent::~Agent() {};
 
 	std::vector<Node*> Agent::GetPath() {
 		return m_pathAgent.GetPath();
@@ -53,18 +50,21 @@ namespace AIForGames {
 	// A function that finds the nearest node to the given point and calculates a path to it.
 	void Agent::GoTo(glm::vec2 point) {
 		Node* end = m_nodeMap->GetClosestNode(point);
+#ifndef NDEBUG
 		m_nodeMap->ClearMapVals();
-		// On mouse click, set the agent's current node = the nearest node to its current world position
-
-		/*if (m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)) != nullptr) {
+#endif
+		/*if (end != nullptr && m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)) != nullptr) {
 			m_pathAgent.SetAgentCurrentNode(m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)));
 			m_pathAgent.GoToNode(end);
-		}
-		else {
-			m_pathAgent.GoToNode(end);
 		}*/
-		m_pathAgent.SetAgentCurrentNode(m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)));
+		//// On mouse click, set the agent's current node = the nearest node to its current world position (so long as that isn't a null pointer)
+		//if (m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)) != nullptr) {
+		//	m_pathAgent.SetAgentCurrentNode(m_nodeMap->GetClosestNode(glm::vec2(m_pathAgent.GetAgentPosition().x, m_pathAgent.GetAgentPosition().y)));
+		//	m_pathAgent.GoToNode(end);
+		//}
+		//else {
 		m_pathAgent.GoToNode(end);
+		//}
 	};
 
 	// A function for setting the physical location of the PathAgent inside this Agent

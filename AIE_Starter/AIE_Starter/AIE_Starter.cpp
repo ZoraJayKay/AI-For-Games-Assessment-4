@@ -24,7 +24,7 @@
 #define RAYGUI_SUPPORT_ICONS
 #include "Pathfinding.h"
 #include <string>;
-//#include "memory.h"
+#include "memory.h"
 #include "NodeMap.h"
 #include <iostream>
 #include "Agent.h"
@@ -131,7 +131,6 @@ int main(int argc, char* argv[])
 	// Set up a Utility AI and add two Behaviours to its collection
 
 	UtilityAI* utilityAI = new UtilityAI(new WanderBehaviour);
-	//utilityAI->AddBehaviour(new WanderBehaviour);
 	utilityAI->AddBehaviour(new FollowBehaviour);
 
 	// ++++++++++++++++++++++++++++++++++++++++++
@@ -144,38 +143,38 @@ int main(int argc, char* argv[])
 	player.SetSpeed(64);
 	player.SetNode(start);
 	
-	//// An agent for wandering the map randomly
-	//Agent agent_behaviour_01(map, new WanderBehaviour(), Agent::SingleBehaviour);
-	//agent_behaviour_01.SetColour(DARKGREEN);
-	//agent_behaviour_01.SetSpeed(64);
-	//agent_behaviour_01.SetNode(map->GetRandomNode());
+	// An agent for wandering the map randomly
+	Agent agent_behaviour_01(map, new WanderBehaviour(), Agent::SingleBehaviour);
+	agent_behaviour_01.SetColour(DARKGREEN);
+	agent_behaviour_01.SetSpeed(64);
+	agent_behaviour_01.SetNode(map->GetRandomNode());
 
-	//// An agent for following the player
-	//Agent agent_behaviour_02(map, new FollowBehaviour(), Agent::SingleBehaviour);
-	//agent_behaviour_02.SetColour(BLUE);
-	//agent_behaviour_02.SetSpeed(48);
-	//agent_behaviour_02.SetTarget(&player);
-	//agent_behaviour_02.SetNode(map->GetRandomNode());
+	// An agent for following the player
+	Agent agent_behaviour_02(map, new FollowBehaviour(), Agent::SingleBehaviour);
+	agent_behaviour_02.SetColour(BLUE);
+	agent_behaviour_02.SetSpeed(48);
+	agent_behaviour_02.SetTarget(&player);
+	agent_behaviour_02.SetNode(map->GetRandomNode());
 
-	//// An agent that switches its behaviour subject to proximity with the player
-	//Agent agent_03(map, new SelectorBehaviour(new FollowBehaviour(), new WanderBehaviour()), Agent::BehaviourSelector);
-	//agent_03.SetSpeed(32);
-	//agent_03.SetNode(map->GetRandomNode());
-	//agent_03.SetTarget(&player);
+	// An agent that switches its behaviour subject to proximity with the player
+	Agent agent_03(map, new SelectorBehaviour(new FollowBehaviour(), new WanderBehaviour()), Agent::BehaviourSelector);
+	agent_03.SetSpeed(32);
+	agent_03.SetNode(map->GetRandomNode());
+	agent_03.SetTarget(&player);
 
-	//// An agent whose behaviour is controlled by the FSM
-	//Agent agent_fsm(map, fsm, Agent::FiniteStateMachine);
-	//agent_fsm.SetNode(map->GetRandomNode());
-	//agent_fsm.SetColour(PURPLE);
-	//agent_fsm.SetSpeed(32);
-	//agent_fsm.SetTarget(&player);
+	// An agent whose behaviour is controlled by the FSM
+	Agent agent_fsm(map, fsm, Agent::FiniteStateMachine);
+	agent_fsm.SetNode(map->GetRandomNode());
+	agent_fsm.SetColour(PURPLE);
+	agent_fsm.SetSpeed(32);
+	agent_fsm.SetTarget(&player);
 
-	//// An agent governed by a UtilityAI
-	//Agent agent_utility(map, utilityAI, Agent::UtilityAI);
-	//agent_utility.SetNode(map->GetRandomNode());
-	//agent_utility.SetColour(ORANGE);
-	//agent_utility.SetSpeed(48);
-	//agent_utility.SetTarget(&player);
+	// An agent governed by a UtilityAI
+	Agent agent_utility(map, utilityAI, Agent::UtilityAI);
+	agent_utility.SetNode(map->GetRandomNode());
+	agent_utility.SetColour(ORANGE);
+	agent_utility.SetSpeed(48);
+	agent_utility.SetTarget(&player);
 
 	// Time at commencement of pathfinding
 	float time = (float)GetTime();
@@ -204,27 +203,27 @@ int main(int argc, char* argv[])
 
 		// Draw a line that shows the current path of the PathAgent inside the Agent that is passed in
 		map->DrawPath(player.GetPath(), YELLOW);
-		/*map->DrawPath(agent_behaviour_01.GetPath(), DARKGREEN);
+		map->DrawPath(agent_behaviour_01.GetPath(), DARKGREEN);
 		map->DrawPath(agent_behaviour_02.GetPath(), DARKBLUE);
 		map->DrawPath(agent_03.GetPath(), agent_03.AgentColour());
 		map->DrawPath(agent_fsm.GetPath(), agent_fsm.AgentColour());
-		map->DrawPath(agent_utility.GetPath(), agent_utility.AgentColour());*/
+		map->DrawPath(agent_utility.GetPath(), agent_utility.AgentColour());
 
 		// Update the behaviour of the Agent that encapsulates the PathAgent
 		player.Update(deltaTime);
-		/*agent_behaviour_01.Update(deltaTime);
+		agent_behaviour_01.Update(deltaTime);
 		agent_behaviour_02.Update(deltaTime);
 		agent_03.Update(deltaTime);
 		agent_fsm.Update(deltaTime);
-		agent_utility.Update(deltaTime);*/
+		agent_utility.Update(deltaTime);
 
 		// Draw the PathAgent inside of the Agent
 		player.Draw();
-		/*agent_behaviour_01.Draw();
+		agent_behaviour_01.Draw();
 		agent_behaviour_02.Draw();
 		agent_03.Draw();
 		agent_fsm.Draw();
-		agent_utility.Draw();*/
+		agent_utility.Draw();
 
 		// Finish
 		EndDrawing();
@@ -282,7 +281,11 @@ int main(int argc, char* argv[])
 	//--------------------------------------------------------------------------------------
 
 	// To delete SelectorBehaviour's pointers (unclear why the destructor won't do this...?)
-	//agent_03.GetBehaviour()->DestroyPointers();
+	delete player.GetBehaviour();
+	delete agent_behaviour_01.GetBehaviour();
+	delete agent_behaviour_02.GetBehaviour();
+	agent_03.GetBehaviour()->DestroyPointers();
+	delete agent_03.GetBehaviour();
 
 	delete fsm;
 	fsm = nullptr;

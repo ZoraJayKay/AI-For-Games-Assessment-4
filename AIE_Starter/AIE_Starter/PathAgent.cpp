@@ -27,12 +27,10 @@ namespace AIForGames {
 		if (m_path.empty()) {
 			return;
 		}
-
-		// 2: Otherwise, calculate the distance to the next node and the unit vector to that node
-		// 2.a: DISTANCE TO NEXT NODE
-		// Distance to the next node = (position of next node - current position)
-		// Distance to the next node = magnitude of the vector between the two nodes (they are both points)
-		// 2.a.i: Calculate the vector between the next node and current node
+		
+		if (GetMap()->GetClosestNode(GetAgentPosition()) != nullptr) {
+			m_currentNode = GetMap()->GetClosestNode(GetAgentPosition());
+		}
 
 		int xDistance = 0;
 		int yDistance = 0;
@@ -67,6 +65,12 @@ namespace AIForGames {
 			// 3: Otherwise, we've overshot the node.
 			// 3.a.i: Add one to currentIndex.
 			m_currentIndex += 1;
+
+			// TEST
+			
+			
+			//m_currentNode = m_path[m_currentIndex];
+			//SetNode(m_path[m_currentIndex]);
 
 			std::vector<Node*>::iterator itr = find(m_path.begin(), m_path.end(), m_path[m_currentIndex]);
 			std::cout << "Passed node " << m_currentIndex << std::endl;
@@ -119,9 +123,9 @@ namespace AIForGames {
 		// Call the pathfinding function to make and store a path from the current node to the given destination
 		m_path = NodeMap::AStarSearch(m_currentNode, node);
 
-		if (!m_path.empty()) {
+		/*if (!m_path.empty()) {
 			m_path = nodeMap->SmoothPath(m_path);
-		}
+		}*/
 		
 		// When we recalculate the path our next node is always the first one along the path, so we reset currentIndex to 0.
 		m_currentIndex = 0;
