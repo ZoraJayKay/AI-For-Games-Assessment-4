@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace AIForGames {
-	
+
 
 	// This is a global namespace function for the AIForGames namespace which will print the node path from back to front for a completed A* search.
 	void NodeMap::Print(vector<Node*> path) {
@@ -58,7 +58,7 @@ namespace AIForGames {
 
 		return GetNode(i, j);
 	}
-	
+
 	// A function to return the node which is x nodes from the left and on the yth row
 	Node* NodeMap::GetNode(int x, int y) {
 		return m_nodes[x + m_width * y];
@@ -71,7 +71,7 @@ namespace AIForGames {
 
 		// Draw a pathing line between each node and the one in front, except for the final node
 		if (path.size() > 0) {
-			for (int i = 0; i < path.size()-1; i++) {
+			for (int i = 0; i < path.size() - 1; i++) {
 				DrawLine(
 					path[i]->position.x,
 					path[i]->position.y,
@@ -79,7 +79,7 @@ namespace AIForGames {
 					path[i + 1]->position.y,
 					passedInColour);
 			}
-		}		
+		}
 	};
 
 	void NodeMap::Draw() {
@@ -111,24 +111,24 @@ namespace AIForGames {
 		lineColour.g = 128;
 		lineColour.b = 128;
 
-			// Loop over the cells in a nested loop for width and height
-			// For each row element...
-			for (int y = 0; y < m_height; y++) {
-				// Look to each column element...
-				for (int x = 0; x < m_width; x++) {
-					// Create a temporary node which is a duplicate of the one whose coordinates are being examined
-					Node* node = GetNode(x, y);
-					// First, if the node is empty / doesn't exist...
-					if (node == nullptr) {
-						// draw a solid block in the empty space without a node
-						DrawRectangle(
-							(int)(x * m_cellSize),		// x
-							(int)(y * m_cellSize),		// y
-							(int)m_cellSize - 1,		// width (minus 1 pixel to separate blocks)
-							(int)m_cellSize - 1,		// height (minus 1 pixel to separate blocks)
-							GRAY);				// colour
+		// Loop over the cells in a nested loop for width and height
+		// For each row element...
+		for (int y = 0; y < m_height; y++) {
+			// Look to each column element...
+			for (int x = 0; x < m_width; x++) {
+				// Create a temporary node which is a duplicate of the one whose coordinates are being examined
+				Node* node = GetNode(x, y);
+				// First, if the node is empty / doesn't exist...
+				if (node == nullptr) {
+					// draw a solid block in the empty space without a node
+					DrawRectangle(
+						(int)(x * m_cellSize),		// x
+						(int)(y * m_cellSize),		// y
+						(int)m_cellSize - 1,		// width (minus 1 pixel to separate blocks)
+						(int)m_cellSize - 1,		// height (minus 1 pixel to separate blocks)
+						GRAY);				// colour
 
-						// Debug print the map coordinates of each empty cell (currently too visually busy with pathed cells included)
+					// Debug print the map coordinates of each empty cell (currently too visually busy with pathed cells included)
 #ifndef NDEBUG
 						/*string coordinateX = to_string(x);
 						string coordinateY = to_string(y);
@@ -136,107 +136,107 @@ namespace AIForGames {
 						const char* coords = coordsYX.c_str();
 						DrawText(coords, (x * m_cellSize) + 2, (y * m_cellSize) + 2, 1, WHITE);*/
 #endif
-					}
+				}
 
-					// When there is a Node, we want to draw lines between it and its connections on its edges.
-					else {
-						// Draw the connections between the node and its neighbours, for every edge of this node
-						for (int i = 0; i < node->connections.size(); i++) {
-							// Create a temporary node pointer that points to each of the nodes connected to this one by an edge
-							Node* other = node->connections[i].targetNode;
+				// When there is a Node, we want to draw lines between it and its connections on its edges.
+				else {
+					// Draw the connections between the node and its neighbours, for every edge of this node
+					for (int i = 0; i < node->connections.size(); i++) {
+						// Create a temporary node pointer that points to each of the nodes connected to this one by an edge
+						Node* other = node->connections[i].targetNode;
 
-							if (node->connections[i].cost < 2) {
-								// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
-								DrawLine(
-									(int)node->position.x,		// line start x
-									(int)node->position.y,		// line start y
-									(int)other->position.x,		// line end x
-									(int)other->position.y,		// line end y
-									lineColour);				// colour
-							}
+						if (node->connections[i].cost < 2) {
+							// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
+							DrawLine(
+								(int)node->position.x,		// line start x
+								(int)node->position.y,		// line start y
+								(int)other->position.x,		// line end x
+								(int)other->position.y,		// line end y
+								lineColour);				// colour
+						}
 
-							else if (node->connections[i].cost < 3) {
-								DrawLine(
-									(int)node->position.x,		// line start x
-									(int)node->position.y,		// line start y
-									(int)other->position.x,		// line end x
-									(int)other->position.y,		// line end y
-									cellColour_02);				// colour
-							}
-							
-							else if (node->connections[i].cost >= 3) {
-								// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
-								DrawLine(
-									(int)node->position.x,		// line start x
-									(int)node->position.y,		// line start y
-									(int)other->position.x,		// line end x
-									(int)other->position.y,		// line end y
-									cellColour_03);				// colour
-							}
+						else if (node->connections[i].cost < 3) {
+							DrawLine(
+								(int)node->position.x,		// line start x
+								(int)node->position.y,		// line start y
+								(int)other->position.x,		// line end x
+								(int)other->position.y,		// line end y
+								cellColour_02);				// colour
+						}
+
+						else if (node->connections[i].cost >= 3) {
+							// Draw a line from the centre of this node to the centre of the other node (not their top-right {0,0} origins)
+							DrawLine(
+								(int)node->position.x,		// line start x
+								(int)node->position.y,		// line start y
+								(int)other->position.x,		// line end x
+								(int)other->position.y,		// line end y
+								cellColour_03);				// colour
+						}
 
 #ifndef NDEBUG
-							/*int cellGCost = node->gScore;
-							string cellCost = to_string(cellGCost);
-							string cellString = "g: (" + cellCost + ")";
-							const char* gCost = cellString.c_str();
-							
-							int cellHCost = node->hScore;
-							string stringHCost = to_string(cellHCost);
-							string hCost = "h: (" + stringHCost + ")";
-							const char* hCostChar = hCost.c_str();*/
+						/*int cellGCost = node->gScore;
+						string cellCost = to_string(cellGCost);
+						string cellString = "g: (" + cellCost + ")";
+						const char* gCost = cellString.c_str();
 
-							int cellFCost = node->fScore;
-							string stringFCost = to_string(cellFCost);
-							string fCost = "f: (" + stringFCost + ")";
-							const char* fCostChar = fCost.c_str();
+						int cellHCost = node->hScore;
+						string stringHCost = to_string(cellHCost);
+						string hCost = "h: (" + stringHCost + ")";
+						const char* hCostChar = hCost.c_str();*/
 
-							Color clr;
+						int cellFCost = node->fScore;
+						string stringFCost = to_string(cellFCost);
+						string fCost = "f: (" + stringFCost + ")";
+						const char* fCostChar = fCost.c_str();
 
-							// If all values are nil (this node was not used for the path)
-							if (node->gScore == 0 &&
-								node->hScore == 0 &&
-								node->fScore == 0) {
-								// Then make its values grey
-								clr = GRAY;
-							}
+						Color clr;
 
-							else {
-								// Else let its colour be white (more visible)
-								clr = WHITE;
-							}
+						// If all values are nil (this node was not used for the path)
+						if (node->gScore == 0 &&
+							node->hScore == 0 &&
+							node->fScore == 0) {
+							// Then make its values grey
+							clr = GRAY;
+						}
 
-							/*DrawText(gCost, (x * m_cellSize) + 2, (y * m_cellSize) + 1, 0.5, clr);
-							DrawText(hCostChar, (x * m_cellSize) + 2, (y * m_cellSize) + 16, 0.5, clr);*/
-							DrawText(fCostChar, (x * m_cellSize) + 2, (y * m_cellSize) + 31, 0.5, clr);							
+						else {
+							// Else let its colour be white (more visible)
+							clr = WHITE;
+						}
+
+						/*DrawText(gCost, (x * m_cellSize) + 2, (y * m_cellSize) + 1, 0.5, clr);
+						DrawText(hCostChar, (x * m_cellSize) + 2, (y * m_cellSize) + 16, 0.5, clr);*/
+						DrawText(fCostChar, (x * m_cellSize) + 2, (y * m_cellSize) + 31, 0.5, clr);
 #endif
-						};
 					};
 				};
 			};
+		};
 
-			string player = "Player";
-			string agent_wander = "Wander Behaviour";
-			string agent_follow = "Follow Behaviour";
-			string agent_selector_01 = "Hybrid Behaviour (Patrol) / ";
-			string agent_selector_02 = "(Chasing Player)";
-			string agent_fsm = "FSM Wander & Follow";
-			string agent_utility = "Utility AI Wander & Follow";
+		string player = "Player";
+		string agent_wander = "Wander Behaviour";
+		string agent_follow = "Follow Behaviour";
+		string agent_selector_01 = "Hybrid Behaviour (Patrol) / ";
+		string agent_selector_02 = "(Chasing Player)";
+		string agent_fsm = "FSM Wander & Follow";
+		string agent_utility = "Utility AI Wander & Follow";
 
-			const char* playerPrint = player.c_str();
-			const char* wanderPrint = agent_wander.c_str();
-			const char* followPrint = agent_follow.c_str();
-			const char* selectorPrint_01 = agent_selector_01.c_str();
-			const char* selectorPrint_02 = agent_selector_02.c_str();
-			const char* fsmPrint = agent_fsm.c_str();
-			const char* utilityPrint = agent_utility.c_str();
+		const char* playerPrint = player.c_str();
+		const char* wanderPrint = agent_wander.c_str();
+		const char* followPrint = agent_follow.c_str();
+		const char* selectorPrint_01 = agent_selector_01.c_str();
+		const char* selectorPrint_02 = agent_selector_02.c_str();
+		const char* fsmPrint = agent_fsm.c_str();
+		const char* utilityPrint = agent_utility.c_str();
 
-			DrawText(playerPrint, 25, (m_cellSize * 18) + 2, 5, YELLOW);
-			DrawText(wanderPrint, 25, (m_cellSize * 18.5) + 2, 5, DARKGREEN);
-			DrawText(followPrint, 25, (m_cellSize * 19) + 2, 5, BLUE);
-			DrawText(selectorPrint_01, 25, (m_cellSize * 19.5) + 2, 5, GREEN);
-			DrawText(selectorPrint_02, 175, (m_cellSize * 19.5) + 2, 5, RED);
-			DrawText(fsmPrint, 25, (m_cellSize * 20) + 2, 5, PURPLE);
-			DrawText(utilityPrint, 25, (m_cellSize * 20.5) + 2, 5, ORANGE);
+		DrawText(playerPrint, 25, (m_cellSize * 18) + 2, 5, YELLOW);
+		DrawText(wanderPrint, 25, (m_cellSize * 18.5) + 2, 5, DARKGREEN);
+		DrawText(followPrint, 25, (m_cellSize * 19) + 2, 5, BLUE);
+		DrawText(selectorPrint_01, 25, (m_cellSize * 19.5) + 2, 5, GREEN);
+		DrawText(selectorPrint_02, 175, (m_cellSize * 19.5) + 2, 5, RED);
+		DrawText(fsmPrint, 25, (m_cellSize * 20) + 2, 5, PURPLE);
+		DrawText(utilityPrint, 25, (m_cellSize * 20.5) + 2, 5, ORANGE);
 	};
 
 	void NodeMap::Initialise(std::vector<std::string> asciiMap, int cellSize) {
@@ -281,7 +281,7 @@ namespace AIForGames {
 				//	== emptySquare					// resolves this as true (the target tile is empty [a '0'])...
 				//	? nullptr						// do this (don't create a node)
 				//	: new Node(((float)x + 0.5f) * m_cellSize, ((float)y + 0.5f) * m_cellSize);		// else do this (create a node with x & y coordinates of where we have iterated up to in the ascii art map rows and columns, in the middle of its 'cell' [hence the halving of cell size for height and width])
-				
+
 				char tile;
 				if (x < line.size()) {
 					tile = line[x];
@@ -330,7 +330,7 @@ namespace AIForGames {
 						// Connect this node to the western node and give it a distance of 1 (or random distance)
 						node->ConnectTo(nodeWest, 1);
 						//node->ConnectTo(nodeWest, GetRandomValue(1, 3));
-						
+
 						// Connect the western node to this node and give it a distance of 1
 						nodeWest->ConnectTo(node, 1);
 						//nodeWest->ConnectTo(node, GetRandomValue(1, 3));
@@ -360,16 +360,16 @@ namespace AIForGames {
 					// If it is true that there IS a node to the south-west (nodeSouthWest is not a nullptr)...
 					if (nodeSouthWest) {
 						// Connect this node to the southern node and give it a distance of 1 (or random value)
-						node->ConnectTo(nodeSouthWest, 1.414f);
-						//node->ConnectTo(nodeSouthWest, GetRandomValue(1, 3) * 1.414f);
+						node->ConnectTo(nodeSouthWest, 1.414);
+						//node->ConnectTo(nodeSouthWest, (float)(GetRandomValue(1, 3) * 1.414f));
 
 						// Connect the south-western node to this node and give it a distance of 1 (or random value)
-						nodeSouthWest->ConnectTo(node, 1.414f);
-						//nodeSouthWest->ConnectTo(node, GetRandomValue(1, 3) * 1.414f);
+						nodeSouthWest->ConnectTo(node, 1.414);
+						//nodeSouthWest->ConnectTo(node, (float)(GetRandomValue(1, 3) * 1.414f));
 					}
 
 					// Create another temporary node pointer to check whether there is a node to the south-east, including a check for array over-runs if this is the east-most column
-					Node* nodeSouthEast = (x == m_width-1 || y == 0)	// If x & y both = 0...
+					Node* nodeSouthEast = (x == m_width - 1 || y == 0)	// If x & y both = 0...
 						? nullptr								// Make nodeSouthWest a nullptr
 						: GetNode(x + 1, y - 1);				// Else get the node to the south-west
 
@@ -377,11 +377,11 @@ namespace AIForGames {
 					if (nodeSouthEast) {
 						// Connect this node to the southern node and give it a distance of 1 (or random value)
 						node->ConnectTo(nodeSouthEast, 1.414f);
-						//node->ConnectTo(nodeSouthEast, GetRandomValue(1, 3) * 1.414f);
+						//node->ConnectTo(nodeSouthEast, (float)(GetRandomValue(1, 3) * 1.414f));
 
 						// Connect the south-western node to this node and give it a distance of 1 (or random value)
 						nodeSouthEast->ConnectTo(node, 1.414f);
-						//nodeSouthEast->ConnectTo(node, GetRandomValue(1, 3) * 1.414f);
+						//nodeSouthEast->ConnectTo(node, (float)(GetRandomValue(1, 3) * 1.414f));
 					}
 				};
 			};
@@ -416,7 +416,7 @@ namespace AIForGames {
 					GetNode(x, y)->gScore = 0;
 					GetNode(x, y)->hScore = 0;
 					GetNode(x, y)->fScore = 0;
-				}				
+				}
 			}
 		}
 	};
@@ -461,24 +461,24 @@ namespace AIForGames {
 			// Return an empty path
 			return path;
 		}
-//
-//		else if (startNode == endNode) {
-//#ifndef NDEBUG
-//			cout << "Start and end are same - path is complete." << endl;
-//#endif
-//			// Return an empty path
-//			return path;
-//		}
-//
-//#ifndef NDEBUG
-//		// 
-//		else {
-//			cout << "Start and end both exist, and are different. Continue." << endl;
-//		}
 
-		//	2	----------------------------------------------------------------------------------------------------
-		cout << "Step 2: Initialise the starting node." << endl;
-//#endif
+		else if (startNode == endNode) {
+#ifndef NDEBUG
+			cout << "Start and end are same - path is complete." << endl;
+#endif
+			// Return an empty path
+			return path;
+		}
+
+#ifndef NDEBUG
+		// 
+		else {
+			cout << "Start and end both exist, and are different. Continue." << endl;
+		}
+
+		2	----------------------------------------------------------------------------------------------------
+			cout << "Step 2: Initialise the starting node." << endl;
+#endif
 
 		// Set distance from the starting node = 0.
 		startNode->gScore = 0;
@@ -588,7 +588,7 @@ namespace AIForGames {
 					cout << "Step 4.6.2: This Edge was not found in the closed list (its processing has started but not yet finished)." << endl;
 #endif
 					// 4.6.2.1a: Calculate a hypothetical g score (for comparison against the pre-existing g score)
-					int calcdG = currentNode->gScore + targetEdge.cost; 
+					int calcdG = currentNode->gScore + targetEdge.cost;
 
 					// 4.6.2.1b: Calculate a heuristic score between this node and the end
 					int calcdH = Heuristic(targetEdge.targetNode, endNode);
@@ -616,7 +616,7 @@ namespace AIForGames {
 						cout
 							<< "Step 4.6.2.2a(i): The target Node of this Edge has had its g score set to ["
 							<< targetEdge.targetNode->gScore
-							<< "], its h score set to [" << targetEdge.targetNode->hScore 
+							<< "], its h score set to [" << targetEdge.targetNode->hScore
 							<< "], and its f score set to [" << targetEdge.targetNode->fScore << "]." << endl;
 #endif
 						// Make the current node be the 'previous' node of the target
@@ -656,7 +656,7 @@ namespace AIForGames {
 			};
 		};
 
-		
+
 #ifndef NDEBUG
 		std::cout << "End while loop\t--------\n" << endl;
 
@@ -665,7 +665,7 @@ namespace AIForGames {
 #endif
 		currentNode = endNode;
 		while (currentNode != nullptr) {
-			path.insert(path.begin(), currentNode);	
+			path.insert(path.begin(), currentNode);
 			currentNode = currentNode->previousNode;
 		}
 
@@ -699,7 +699,7 @@ namespace AIForGames {
 
 		xDistance = end->position.x - start->position.x;
 		yDistance = end->position.y - start->position.y;
-		
+
 		// 1.2: Make a vector that points from the start to the end (the "delta")
 		glm::vec2 directionVector = { xDistance, yDistance };
 
@@ -718,7 +718,7 @@ namespace AIForGames {
 			float x = (fifthCellSizedVector.x * cells);
 			float y = (fifthCellSizedVector.y * cells);
 
-			glm::vec2 testPosition = { 
+			glm::vec2 testPosition = {
 				start->position.x + x,
 				start->position.y + y
 			};
@@ -727,11 +727,11 @@ namespace AIForGames {
 			// If the test position lands on a null pointer we've hit an obstacle
 			if (GetClosestNode(testPosition) == nullptr) {
 #ifndef NDEBUG
-				
+
 				cout << "testPosition calculated (" << testPosition.x << " , " << testPosition.y << ")" << std::endl;
 				cout << "Visibility check ended, returned FALSE" << std::endl;
 #endif
-				
+
 				return false;
 			}
 		}
@@ -744,20 +744,88 @@ namespace AIForGames {
 	};
 
 	// A function for return a path of only two nodes if there is a clear line of sight between them
-	std::vector<Node*> NodeMap::SmoothPath(std::vector<Node*> path) {
+	std::vector<Node*> NodeMap::SmoothPath(std::vector<Node*> path, float& speedMod) {
 		// Loop over all nodes in the path. Compare node A to node C, and if there is no null pointer between them (B), delete B.
+		float costToPreserve = 0;
 
 		for (int i = 0; i < path.size(); i++)		// do as many passes as there are elements (i passes)
 		{
 			for (int j = i + 2; j < path.size(); j++)
 			{
 				if (IsVisibleFrom(path[i], path[j])) {
+					//// Before deleting the node, preserve the cost it should have been to travel there
+					//for (int k = 0; k < path[i]->connections.size(); k++) {
+					//	if (path[i]->connections[k].targetNode == path[j - 1]) {
+					//		costToPreserve += path[i]->connections[k].cost;
+					//		//break;
+					//	}
+					//}
+
 					path.erase(path.begin() + (j - 1));
 					j--;
 				}
 			}
 		}
 
+		//speedMod = (costToPreserve / path.size());
+
 		return path;
-	};
-};
+	}
+}
+//
+//
+//
+//
+//		 connect the edges to each other
+//		vector<Node*> newPath;
+//
+//		newPath.push_back(*path.begin());
+//
+//		int startNum = path.size();
+//		int endNum = 0;
+//		int costToPreserve = 0;
+//
+//		for (int i = 0; i < path.size(); i++) {
+//			for (int j = i + 2; j < path.size(); j++) {
+//				int costToPreserve = 0;
+//				//int newNodesAdded = 0;
+//
+//				if (IsVisibleFrom(path[i], path[j])) {
+//					
+//					// Before deleting the node, preserve the cost it should have been to travel there
+//					for (int k = 0; k < path[i]->connections.size(); k++) {
+//						if (path[i]->connections[k].targetNode == path[j]) {
+//							costToPreserve += path[i]->connections[k].cost;
+//							break;
+//						}
+//					}
+//
+//					path.erase(path.begin() + (j - 1));
+//					j--;
+//				}
+//
+//				else if (!IsVisibleFrom(path[i], path[j])) {
+//					newPath.push_back(path[j - 1]);
+//					newNodesAdded++;
+//
+//					newPath[newNodesAdded - 1]->ConnectTo(newPath[newNodesAdded], costToPreserve);
+//					newPath[newNodesAdded]->ConnectTo(newPath[newNodesAdded - 1], costToPreserve);
+//
+//					// Move the 'current' node to where the last straight line ended
+//					i = j - 1;
+//					j = i + 2;
+//
+//					costToPreserve = 0;
+//				//}
+//			}
+//		}
+//
+//		// Calculate the average cost of Edges over the new path
+//		//int averageEdgeCost = costToPreserve / path.size();
+//
+//
+//
+//		//return path;
+//		//return newPath;
+//	};
+//};

@@ -17,6 +17,7 @@ namespace AIForGames {
 		Color m_agentColour;
 		const char* stateText;
 		NodeMap* nodeMap;
+		float m_speedModifier;
 
 	public:
 		PathAgent();
@@ -28,17 +29,20 @@ namespace AIForGames {
 		glm::vec2 GetAgentPosition();
 		std::vector<Node*> GetPath();
 		NodeMap* GetMap();
+		float GetSpeedModifier();
 		void GoToNode(Node* node);
 		void Reset();
 		void SetMap(NodeMap* newMap);
 
 		// A function for setting the physical location of the PathAgent
 		void SetNode(Node* node);
-		void SetSpeed(int spd);
+		void SetSpeed(float spd);
 		void SetAgentPosition(glm::vec2 pos);
 		void SetAgentCurrentNode(Node* node);
 		void SetColour(Color colour);
+		void SetSpeedModifier(float mod);
 		void SetStateText(const char* text);
 		void Update(float deltaTime);
+		float GetSpeed();
 	};
 }

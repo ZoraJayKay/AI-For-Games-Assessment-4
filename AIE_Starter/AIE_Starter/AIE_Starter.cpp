@@ -24,7 +24,7 @@
 #define RAYGUI_SUPPORT_ICONS
 #include "Pathfinding.h"
 #include <string>;
-#include "memory.h"
+//#include "memory.h"
 #include "NodeMap.h"
 #include <iostream>
 #include "Agent.h"
@@ -226,6 +226,13 @@ int main(int argc, char* argv[])
 		agent_03.Draw();
 		agent_fsm.Draw();
 		agent_utility.Draw();
+
+		float num = player.GetAgent().GetSpeedModifier();
+		std::cout << num << std::endl;
+
+		string spd = to_string(player.GetAgent().GetSpeedModifier());
+		const char* spdPrint = spd.c_str();
+		DrawText(spdPrint, player.GetPosition().x, player.GetPosition().y, 10, RED);
 
 		// Finish
 		EndDrawing();

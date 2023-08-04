@@ -18,9 +18,21 @@ namespace AIForGames {
 		m_position.y = node->position.y;
 	};
 
-	void PathAgent::SetSpeed(int spd) {
+	void PathAgent::SetSpeed(float spd) {
 		m_speed = spd;
 	};
+
+	float PathAgent::GetSpeed() {
+		return m_speed;
+	}
+
+	float PathAgent::GetSpeedModifier() {
+		return m_speedModifier;
+	}
+
+	void PathAgent::SetSpeedModifier(float mod) {
+		m_speedModifier = mod;
+	}
 
 	void PathAgent::Update(float deltaTime) {
 		// 1: If the path is empty, Don't go anywhere, and empty the path so future updates do nothing.
@@ -28,23 +40,23 @@ namespace AIForGames {
 			return;
 		}
 		
-		// If the closest node is a null pointer, or it is the last node in the path, don't update the current node, otherwise do
+		// 2: If the closest node is a null pointer, or it is the last node in the path, don't update the current node, otherwise do
 		if (GetMap()->GetClosestNode(GetAgentPosition()) != nullptr && 
 			GetMap()->GetClosestNode(GetAgentPosition()) != m_path.back()) {
 				SetAgentCurrentNode(GetMap()->GetClosestNode(GetAgentPosition()));
 		}
 
-		// 1: Calculate a vector from the position of the next node to our current position (actual position, not node position)
+		// 3: Calculate a vector from the position of the next node to our current position (actual position, not node position)
 		int xDistance = 0;
 		int yDistance = 0;
 		
-		// If we're only moving one node and this path has never been updated before (it has never had a chance to hit the path end condition further below)
+		// 3.a.i: If we're only moving one node and this path has never been updated before (it has never had a chance to hit the path-end condition further below) then only calculate based on itself
 		if (m_path.front() == m_path.back()) {
 			xDistance = m_path.back()->position.x - m_position.x;
 			yDistance = m_path.back()->position.y - m_position.y;
 		}
 
-		// Otherwise calculate normally
+		// 3.b.i: Otherwise calculate on the basis of many nodes
 		else {
 			xDistance = m_path[m_currentIndex + 1]->position.x - m_position.x;
 			yDistance = m_path[m_currentIndex + 1]->position.y - m_position.y;
@@ -52,36 +64,53 @@ namespace AIForGames {
 
 		glm::vec2 directionVector = {xDistance, yDistance};
 		
-		// 2.a.ii: Calculate the distance (the vector's magnitude [square root of its coordinates squared])
+		// 3.c: Calculate the distance (the vector's magnitude [square root of its coordinates squared])
 		int distance = sqrt(
 			(directionVector.x * directionVector.x) +
 			(directionVector.y * directionVector.y));
 
-		// 2.b: UNIT VECTOR TO NEXT NODE
-		// 2.b.i: Calculate a unit vector by dividing the vector with its own magnitude
+		// 3.d: UNIT VECTOR TO NEXT NODE
+		// 3.d.i: Calculate a unit vector by dividing the vector with its own magnitude
 		glm::vec2 unitVector;
 		unitVector.x = directionVector.x / distance;
 		unitVector.y = directionVector.y / distance;
-		
-		// 2.b.ii: Subtract speed * deltaTime from the distance (how much we're going to move this frame)
-		int frameMoveTick = distance - (m_speed * deltaTime);
 
-		// 2.b.iii: If distance is greater than zero, then this frame we're just moving towards the target node; add speed * deltaTime * unit vector to our position
+		// Set a base movement modifier of 100% (not modifying current speed)
+		float moveDifficulty = 1;
+
+		// 3.d.ii: In order to calculate the speed reduction owing to the cost of the Edge, find the Edge we're going to travel
+		//if (m_path.size() > 1) {
+			for (int i = 0; i < m_path[m_currentIndex]->connections.size(); i++) {
+				if (m_path[m_currentIndex]->connections[i].targetNode == m_path[m_currentIndex + 1]) {
+					moveDifficulty = m_path[m_currentIndex]->connections[i].cost;
+					break;
+				}
+			}
+		//}
+		
+
+		// 3.d.iii: Set the cost of the Edge we're travelling as the difficulty to be applied to movement speed
+		SetSpeedModifier(moveDifficulty);
+
+		// 3.d.iv: Subtract speed * deltaTime from the distance (how much we're going to move this frame)
+		int frameMoveTick = distance - ((GetSpeed() / GetSpeedModifier()) *deltaTime);
+
+		// 3.d.v: If distance is greater than zero, then this frame we're just moving towards the target node; add speed * deltaTime * unit vector to our position
 		if (frameMoveTick > 0) {
-			m_position.x += (m_speed * deltaTime * unitVector.x);
-			m_position.y += (m_speed * deltaTime * unitVector.y);
+			m_position.x += ((GetSpeed() / GetSpeedModifier()) * deltaTime * unitVector.x);
+			m_position.y += ((GetSpeed() / GetSpeedModifier()) * deltaTime * unitVector.y);
 		}
 		
 		else {
-			// 3: Otherwise, we've overshot the node.
-			// 3.a.i: Add one to currentIndex.
+			// 4: Otherwise, we've overshot the node.
+			// 4.a.i: Add one to currentIndex.
 			m_currentIndex += 1;
 
 			std::vector<Node*>::iterator itr = find(m_path.begin(), m_path.end(), m_path[m_currentIndex]);
 			std::cout << "Passed node " << m_currentIndex << std::endl;
 
 
-			// 3.a.ii: If we've reached the end of our path...
+			// 4.a.ii: If we've reached the end of our path...
 			if (*itr == m_path.back()) {
 				std::cout << "Path end reached." << std::endl;
 
@@ -92,18 +121,12 @@ namespace AIForGames {
 				return;
 			};
 
-			// 3.a.iii: If we have a next node...
+			// 4.a.iii: If we have a next node...
 			if (itr != m_path.end()) {
 				std::cout << "Path end not yet reached, continuing." << std::endl;
-				// Update the 'current' node
-				//SetNode(m_path[m_currentIndex]);
 
 				// Then distance with the subtracted speed * deltaTime tells us how far we've overshot the node if we invert it.
-				int overshoot = (distance - (m_speed * deltaTime));
-
-				// Find the unit vector from our previous node to the new next node...
-				/*xDistance = m_path[m_currentIndex + 1]->position.x - m_path[m_currentIndex - 1]->position.x;
-				yDistance = m_path[m_currentIndex + 1]->position.y - m_path[m_currentIndex - 1]->position.y;*/
+				int overshoot = (distance - ((GetSpeed() / GetSpeedModifier()) * deltaTime));
 
 				xDistance = m_path[m_currentIndex + 1]->position.x - m_position.x;
 				yDistance = m_path[m_currentIndex + 1]->position.y - m_position.y;
@@ -132,9 +155,12 @@ namespace AIForGames {
 		m_path = NodeMap::AStarSearch(m_currentNode, node);
 
 		if (!m_path.empty()) {
-			m_path = nodeMap->SmoothPath(m_path);
+			// Speed adjustment has not been implemented for path smoothing 
+			float speedMod = GetSpeedModifier();
+			m_path = nodeMap->SmoothPath(m_path, speedMod);
+			//this->SetSpeedModifier(speedMod);
 		}
-		
+
 		// When we recalculate the path our next node is always the first one along the path, so we reset currentIndex to 0.
 		m_currentIndex = 0;
 	};

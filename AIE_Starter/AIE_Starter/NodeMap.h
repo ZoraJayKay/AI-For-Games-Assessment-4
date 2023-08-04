@@ -65,6 +65,6 @@ namespace AIForGames {
 		bool IsVisibleFrom(Node* start, Node* end);
 
 		// A function for return a path of only two nodes if there is a clear line of sight between them
-		std::vector<Node*> SmoothPath(std::vector<Node*> path);
+		std::vector<Node*> SmoothPath(std::vector<Node*> path, float& speedMod);
 	};
 }
