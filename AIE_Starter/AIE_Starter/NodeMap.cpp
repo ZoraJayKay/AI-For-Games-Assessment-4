@@ -1,3 +1,6 @@
+#define RAYGUI_IMPLEMENTATION
+#define RAYGUI_SUPPORT_ICONS
+
 #include "NodeMap.h"
 #include <iostream>
 #include <vector>
@@ -357,11 +360,11 @@ namespace AIForGames {
 					// If it is true that there IS a node to the south-west (nodeSouthWest is not a nullptr)...
 					if (nodeSouthWest) {
 						// Connect this node to the southern node and give it a distance of 1 (or random value)
-						node->ConnectTo(nodeSouthWest, 1);
+						node->ConnectTo(nodeSouthWest, 1.414f);
 						//node->ConnectTo(nodeSouthWest, GetRandomValue(1, 3) * 1.414f);
 
 						// Connect the south-western node to this node and give it a distance of 1 (or random value)
-						nodeSouthWest->ConnectTo(node, 1);
+						nodeSouthWest->ConnectTo(node, 1.414f);
 						//nodeSouthWest->ConnectTo(node, GetRandomValue(1, 3) * 1.414f);
 					}
 
@@ -373,11 +376,11 @@ namespace AIForGames {
 					// If it is true that there IS a node to the south-west (nodeSouthWest is not a nullptr)...
 					if (nodeSouthEast) {
 						// Connect this node to the southern node and give it a distance of 1 (or random value)
-						node->ConnectTo(nodeSouthEast, 1);
+						node->ConnectTo(nodeSouthEast, 1.414f);
 						//node->ConnectTo(nodeSouthEast, GetRandomValue(1, 3) * 1.414f);
 
 						// Connect the south-western node to this node and give it a distance of 1 (or random value)
-						nodeSouthEast->ConnectTo(node, 1);
+						nodeSouthEast->ConnectTo(node, 1.414f);
 						//nodeSouthEast->ConnectTo(node, GetRandomValue(1, 3) * 1.414f);
 					}
 				};
@@ -690,35 +693,37 @@ namespace AIForGames {
 		cout << "Started at (" << start->position.x << " , " << start->position.y << ")" << std::endl;
 		cout << "Clicked on (" << mousePos.x << " , " << mousePos.y << ")" << std::endl;
 #endif
-		// Determine the Cartesian distances between points
+		// 1: Calculate a vector from start to end that is one cellsize in length
+		// 1.1: Determine the Cartesian distances between the two points
 		int xDistance = 0;
 		int yDistance = 0;
-		
 
 		xDistance = end->position.x - start->position.x;
 		yDistance = end->position.y - start->position.y;
 		
-		// Make a vector that points from the start to the end
-		glm::vec2 delta = { xDistance, yDistance };
+		// 1.2: Make a vector that points from the start to the end (the "delta")
+		glm::vec2 directionVector = { xDistance, yDistance };
 
-		// Calculate the distance from start to end (this is the vector's magnitude [the square root of its coordinates squared])
+		// 1.3: Make sure the magnitude is right (one cell)
 		float distance = sqrt(
-			(delta.x * delta.x) +
-			(delta.y * delta.y));
+			(directionVector.x * directionVector.x) +
+			(directionVector.y * directionVector.y));
 
-		// Scale the vector so that it equals the size of one cell
-		/*delta.x = delta.x / (distance / AIForGames::sizeOfCell);
-		delta.y = delta.y / (distance / AIForGames::sizeOfCell);*/
-
-		delta.x = delta.x / distance * (distance / AIForGames::sizeOfCell);
-		delta.y = delta.y / distance * (distance / AIForGames::sizeOfCell);
+		// 1.4: Scale the direction vector to be equal in size to one cell
+		glm::vec2 cellSizedVector;
+		cellSizedVector.x = directionVector.x * (AIForGames::sizeOfCell / distance);
+		cellSizedVector.y = directionVector.y * (AIForGames::sizeOfCell / distance);
 
 		// Evaluate each cell one at a time toward to the end until the end has been reached
-		for (float cells = 1.0f; cells < distance / AIForGames::sizeOfCell; cells += 1.0f) {
+		for (float cells = 1.0f; cells < (distance / AIForGames::sizeOfCell); cells += 1.0f) {
+			float x = (cellSizedVector.x * cells);
+			float y = (cellSizedVector.y * cells);
+
 			glm::vec2 testPosition = { 
-				start->position.x + (delta.x * cells), 
-				start->position.y + (delta.y * cells)
+				start->position.x + x,
+				start->position.y + y
 			};
+
 
 			// If the test position lands on a null pointer we've hit an obstacle
 			if (GetClosestNode(testPosition) == nullptr) {
@@ -741,22 +746,19 @@ namespace AIForGames {
 
 	// A function for return a path of only two nodes if there is a clear line of sight between them
 	std::vector<Node*> NodeMap::SmoothPath(std::vector<Node*> path) {
-		if (path.empty() == true) {
-			return path;
+		// Loop over all nodes in the path. Compare node A to node C, and if there is no null pointer between them (B), delete B.
+
+		for (int i = 0; i < path.size(); i++)		// do as many passes as there are elements (i passes)
+		{
+			for (int j = i + 2; j < path.size(); j++)
+			{
+				if (IsVisibleFrom(path[i], path[j])) {
+					path.erase(path.begin() + (j - 1));
+					j--;
+				}
+			}
 		}
 
-		Node* first = path[0];
-		Node* last = path[path.size()-1];
-
-
-		if (IsVisibleFrom(first, last) == true) {
-			vector<Node*> newPath;
-			newPath.push_back(first);
-			newPath.push_back(last);
-
-			return newPath;
-		}
-
-		return path;		
+		return path;
 	};
 };
