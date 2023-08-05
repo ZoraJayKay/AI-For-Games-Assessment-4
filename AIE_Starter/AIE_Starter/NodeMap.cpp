@@ -215,28 +215,33 @@ namespace AIForGames {
 		};
 
 		string player = "Player";
-		string agent_wander = "Wander Behaviour";
-		string agent_follow = "Follow Behaviour";
+		/*string agent_wander = "Wander Behaviour";
+		string agent_follow = "Follow Behaviour";*/
 		string agent_selector_01 = "Hybrid Behaviour (Patrol) / ";
 		string agent_selector_02 = "(Chasing Player)";
 		string agent_fsm = "FSM Wander & Follow";
 		string agent_utility = "Utility AI Wander & Follow";
 
 		const char* playerPrint = player.c_str();
-		const char* wanderPrint = agent_wander.c_str();
-		const char* followPrint = agent_follow.c_str();
+		/*const char* wanderPrint = agent_wander.c_str();
+		const char* followPrint = agent_follow.c_str();*/
 		const char* selectorPrint_01 = agent_selector_01.c_str();
 		const char* selectorPrint_02 = agent_selector_02.c_str();
 		const char* fsmPrint = agent_fsm.c_str();
 		const char* utilityPrint = agent_utility.c_str();
 
 		DrawText(playerPrint, 25, (m_cellSize * 18) + 2, 5, YELLOW);
-		DrawText(wanderPrint, 25, (m_cellSize * 18.5) + 2, 5, DARKGREEN);
+		/*DrawText(wanderPrint, 25, (m_cellSize * 18.5) + 2, 5, DARKGREEN);
 		DrawText(followPrint, 25, (m_cellSize * 19) + 2, 5, BLUE);
 		DrawText(selectorPrint_01, 25, (m_cellSize * 19.5) + 2, 5, GREEN);
 		DrawText(selectorPrint_02, 175, (m_cellSize * 19.5) + 2, 5, RED);
 		DrawText(fsmPrint, 25, (m_cellSize * 20) + 2, 5, PURPLE);
-		DrawText(utilityPrint, 25, (m_cellSize * 20.5) + 2, 5, ORANGE);
+		DrawText(utilityPrint, 25, (m_cellSize * 20.5) + 2, 5, ORANGE);*/
+
+		DrawText(selectorPrint_01, 25, (m_cellSize * 18.5) + 2, 5, GREEN);
+		DrawText(selectorPrint_02, 175, (m_cellSize * 18.5) + 2, 5, RED);
+		DrawText(fsmPrint, 25, (m_cellSize * 19) + 2, 5, PURPLE);
+		DrawText(utilityPrint, 25, (m_cellSize * 19.5) + 2, 5, ORANGE);
 	};
 
 	void NodeMap::Initialise(std::vector<std::string> asciiMap, int cellSize) {
@@ -296,8 +301,9 @@ namespace AIForGames {
 				else {
 					m_nodes[x + m_width * y] = new Node(((float)x + 0.5f) * m_cellSize, ((float)y + 0.5f) * m_cellSize);
 				}
-
+#ifndef NDEBUG
 				std::cout << "Created node at position:\tColumn (" << x << ")\tRow (" << y << ")." << std::endl;
+#endif
 			}
 		}
 
@@ -746,32 +752,48 @@ namespace AIForGames {
 	// A function for return a path of only two nodes if there is a clear line of sight between them
 	std::vector<Node*> NodeMap::SmoothPath(std::vector<Node*> path, float& speedMod) {
 		// Loop over all nodes in the path. Compare node A to node C, and if there is no null pointer between them (B), delete B.
-		float costToPreserve = 0;
-
-		for (int i = 0; i < path.size(); i++)		// do as many passes as there are elements (i passes)
-		{
+		for (int i = 0; i < path.size(); i++)
+		{			
 			for (int j = i + 2; j < path.size(); j++)
 			{
 				if (IsVisibleFrom(path[i], path[j])) {
-					//// Before deleting the node, preserve the cost it should have been to travel there
-					//for (int k = 0; k < path[i]->connections.size(); k++) {
-					//	if (path[i]->connections[k].targetNode == path[j - 1]) {
-					//		costToPreserve += path[i]->connections[k].cost;
-					//		//break;
-					//	}
-					//}
-
 					path.erase(path.begin() + (j - 1));
-					j--;
-				}
+					i = 0;
+					j = i + 1;
+				}				
 			}
 		}
-
-		//speedMod = (costToPreserve / path.size());
 
 		return path;
 	}
 }
+
+
+		// **************** --------------------- NOT IMPLEMENTED CONSIDERATIONS / THINKING RE: EDGE COSTS FOR NON-NODE PATHING SPEED CALCULATION
+		//for (int i = 0; i < path.size(); i++)		// do as many passes as there are elements (i passes)
+		//{
+		//	for (int j = i + 2; j < path.size(); j++)
+		//	{
+		//		if (IsVisibleFrom(path[i], path[j])) {
+		//			//// Before deleting the node, preserve the cost it should have been to travel there
+		//			//for (int k = 0; k < path[i]->connections.size(); k++) {
+		//			//	if (path[i]->connections[k].targetNode == path[j - 1]) {
+		//			//		costToPreserve += path[i]->connections[k].cost;
+		//			//		//break;
+		//			//	}
+		//			//}
+
+		//			path.erase(path.begin() + (j - 1));
+		//			j--;
+		//		}
+		//	}
+		//}
+
+
+
+		//speedMod = (costToPreserve / path.size());
+		
+
 //
 //
 //

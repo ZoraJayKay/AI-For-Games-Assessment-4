@@ -152,6 +152,8 @@
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="SelectorBehaviour.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="SteeringBehaviour.cpp" />
+    <ClCompile Include="SteeringForce.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="UtilityAI.cpp" />
     <ClCompile Include="WanderBehaviour.cpp" />
@@ -175,6 +177,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SelectorBehaviour.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="SteeringBehaviour.h" />
+    <ClInclude Include="SteeringForce.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="UtilityAI.h" />
     <ClInclude Include="WanderBehaviour.h" />

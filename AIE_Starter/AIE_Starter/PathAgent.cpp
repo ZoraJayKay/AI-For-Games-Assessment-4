@@ -79,15 +79,12 @@ namespace AIForGames {
 		float moveDifficulty = 1;
 
 		// 3.d.ii: In order to calculate the speed reduction owing to the cost of the Edge, find the Edge we're going to travel
-		//if (m_path.size() > 1) {
-			for (int i = 0; i < m_path[m_currentIndex]->connections.size(); i++) {
-				if (m_path[m_currentIndex]->connections[i].targetNode == m_path[m_currentIndex + 1]) {
-					moveDifficulty = m_path[m_currentIndex]->connections[i].cost;
-					break;
-				}
+		for (int i = 0; i < m_path[m_currentIndex]->connections.size(); i++) {
+			if (m_path[m_currentIndex]->connections[i].targetNode == m_path[m_currentIndex + 1]) {
+				moveDifficulty = m_path[m_currentIndex]->connections[i].cost;
+				break;
 			}
-		//}
-		
+		}		
 
 		// 3.d.iii: Set the cost of the Edge we're travelling as the difficulty to be applied to movement speed
 		SetSpeedModifier(moveDifficulty);
@@ -107,13 +104,15 @@ namespace AIForGames {
 			m_currentIndex += 1;
 
 			std::vector<Node*>::iterator itr = find(m_path.begin(), m_path.end(), m_path[m_currentIndex]);
+#ifndef NDEBUG
 			std::cout << "Passed node " << m_currentIndex << std::endl;
-
+#endif
 
 			// 4.a.ii: If we've reached the end of our path...
 			if (*itr == m_path.back()) {
+#ifndef NDEBUG
 				std::cout << "Path end reached." << std::endl;
-
+#endif
 				// Snap to the final node...
 				SetNode(m_path.back());
 				// ... and empty the path so future updates do nothing.
@@ -123,8 +122,9 @@ namespace AIForGames {
 
 			// 4.a.iii: If we have a next node...
 			if (itr != m_path.end()) {
+#ifndef NDEBUG
 				std::cout << "Path end not yet reached, continuing." << std::endl;
-
+#endif
 				// Then distance with the subtracted speed * deltaTime tells us how far we've overshot the node if we invert it.
 				int overshoot = (distance - ((GetSpeed() / GetSpeedModifier()) * deltaTime));
 
@@ -155,7 +155,7 @@ namespace AIForGames {
 		m_path = NodeMap::AStarSearch(m_currentNode, node);
 
 		if (!m_path.empty()) {
-			// Speed adjustment has not been implemented for path smoothing 
+			// Speed adjustment has not been implemented for path smoothing as I have not implemented a way to calculate the speed impact of Edge costs, as path smoothing does not use existing Edges.
 			float speedMod = GetSpeedModifier();
 			m_path = nodeMap->SmoothPath(m_path, speedMod);
 			//this->SetSpeedModifier(speedMod);

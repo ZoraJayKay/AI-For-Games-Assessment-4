@@ -29,8 +29,9 @@ namespace AIForGames {
 
 		// When the shot timer * delta time = 3 (approximately three seconds) update decision making
 		if (agent->GetTimeInBehaviour() * deltaTime >= 3) {
+#ifndef NDEBUG
 			std::cout << "3 seconds has passed, update behaviour" << std::endl;
-
+#endif
 			// The presumed baseline is nil
 			float bestEval = 0;
 

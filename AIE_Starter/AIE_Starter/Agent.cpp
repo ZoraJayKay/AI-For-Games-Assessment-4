@@ -21,12 +21,21 @@ namespace AIForGames {
 
 	Agent::~Agent() {};
 
-	std::vector<Node*> Agent::GetPath() {
-		return m_pathAgent.GetPath();
-	}
-
 	// This function updates the current Behaviour and then updates the PathAgent itself every frame
 	void Agent::Update(float deltaTime) {
+		float vel = GetAgent().GetSpeed() * GetAgent().GetSpeedModifier();
+
+		// If the agent's theoretical velocity exceeds its maximum velocity then cap velocity to the max
+		if (vel > GetMaxVelocity()) {
+			SetVelocity(GetMaxVelocity());
+		}
+
+		// Otherwise apply the current velocity
+		else {
+			SetVelocity(vel);
+		}
+
+		// If a Behaviour is present, apply its effects from Updating
 		if (m_current) {
 			// Update the Behaviour of this Agent
 			m_current->Update(this, deltaTime);
@@ -61,74 +70,38 @@ namespace AIForGames {
 		m_pathAgent.SetAgentPosition(glm::vec2(node->position.x, node->position.y));
 	}
 
-	void Agent::SetSpeed(int speed) {
-		m_pathAgent.SetSpeed(speed);
-	};
-
-	void Agent::SetAgent(PathAgent agent) {
-		m_pathAgent = agent;
-	};
-
 	// A function to return true if the PathAgent's path has been emptied (arrived at the node)
-	bool Agent::PathComplete() {
-		return m_pathAgent.GetPath().empty();
-	};
-
-	// A function to return the node map of this Agent's PathAgent
-	NodeMap* Agent::GetMap() {
-		return m_nodeMap;
-	};
-
-	Agent* Agent::GetTarget() {
-		return m_targetAgent;
-	}
-
-	Behaviour* Agent::GetBehaviour() {
-		return m_current;
-	};
-
-	PathAgent Agent::GetAgent() {
-		return m_pathAgent;
-	}
-
-	void Agent::SetTarget(Agent* agent) {
-		m_targetAgent = agent;
-	}
-
-	glm::vec2 Agent::GetPosition() {
-		return m_pathAgent.GetAgentPosition();
-	}
+	bool Agent::PathComplete() { return m_pathAgent.GetPath().empty(); };
 
 	// A function for resetting this agent's path
-	void Agent::Reset() {
-		m_pathAgent.Reset();
-	};
+	void Agent::Reset() { m_pathAgent.Reset(); };
 
-	void Agent::SetColour(Color colour) {
-		m_pathAgent.SetColour(colour);
-	}
+	// Getters for various private parameters
+	glm::vec2 Agent::GetMaxForce() { return MaxForce; }
+	float Agent::GetMaxVelocity() { return MaxVelocity; }
+	float Agent::GetTimeInBehaviour() { return timeInBehaviour; };
+	
+	NodeMap* Agent::GetMap() { return m_nodeMap; };
+	Agent* Agent::GetTarget() { return m_targetAgent; }
+	Color Agent::AgentColour() { return m_pathAgent.GetColour(); }
+	PathAgent Agent::GetAgent() { return m_pathAgent; }
+	glm::vec2 Agent::GetPosition() { return m_pathAgent.GetAgentPosition(); }
+	Behaviour* Agent::GetBehaviour() { return m_current; };
+	const char* Agent::GetStateText() { return m_stateText; }
+	std::vector<Node*> Agent::GetPath() { return m_pathAgent.GetPath(); }
+	Agent::AgentControlType Agent::GetType() { return m_type; }
+	float Agent::GetVelocity() { return Velocity; }
 
-	void Agent::SetStateText(const char* text) {
-		m_pathAgent.SetStateText(text);
-	}
-
-	const char* Agent::GetStateText() {
-		return m_stateText;
-	}
-
-	Color Agent::AgentColour() {
-		return m_pathAgent.GetColour();
-	}
-
-	Agent::AgentControlType Agent::GetType() {
-		return m_type;
-	}
-
-	float Agent::GetTimeInBehaviour() {
-		return timeInBehaviour;
-	};
-
-	void Agent::SetTimeInBehaviour(float time) {
-		timeInBehaviour = time;
-	};
+	// Setters for various private parameters
+	void Agent::AddForce(glm::vec2 force) { Force += force; }
+	void Agent::SetSpeed(int speed) { m_pathAgent.SetSpeed(speed); };
+	void Agent::SetAgent(PathAgent agent) { m_pathAgent = agent; };
+	void Agent::SetTarget(Agent* agent) { m_targetAgent = agent; }
+	void Agent::SetColour(Color colour) { m_pathAgent.SetColour(colour); }
+	void Agent::SetMaxForce(glm::vec2 maxFrc) { MaxForce = maxFrc; }
+	void Agent::SetStateText(const char* text) { m_pathAgent.SetStateText(text); }
+	void Agent::SetMaxVelocity(float maxVel) { MaxVelocity = maxVel; }
+	void Agent::SetVelocity(float vel) { Velocity = vel; }
+	void Agent::SetTimeInBehaviour(float time) { timeInBehaviour = time; };
+	
 }

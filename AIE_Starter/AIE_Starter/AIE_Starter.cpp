@@ -227,12 +227,10 @@ int main(int argc, char* argv[])
 		agent_fsm.Draw();
 		agent_utility.Draw();
 
-		float num = player.GetAgent().GetSpeedModifier();
-		std::cout << num << std::endl;
-
+		/*
 		string spd = to_string(player.GetAgent().GetSpeedModifier());
 		const char* spdPrint = spd.c_str();
-		DrawText(spdPrint, player.GetPosition().x, player.GetPosition().y, 10, RED);
+		DrawText(spdPrint, player.GetPosition().x, player.GetPosition().y, 10, RED);*/
 
 		// Finish
 		EndDrawing();

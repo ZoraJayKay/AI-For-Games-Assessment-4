@@ -29,26 +29,35 @@ namespace AIForGames {
 		void Update(float deltaTime);
 		void Draw();
 		void GoTo(glm::vec2 point);
+
+		NodeMap* GetMap();
+		float GetMaxVelocity();
+		float GetVelocity();
+		glm::vec2 GetMaxForce();
+		Agent* GetTarget();
+		std::vector<Node*> GetPath();
+		PathAgent GetAgent();
+		Behaviour* GetBehaviour();
+		AgentControlType GetType();
+		float GetTimeInBehaviour();
+		const char* GetStateText();
+		glm::vec2 GetPosition();
+
+		void AddForce(glm::vec2 force);
 		void SetNode(Node* node);
 		void SetSpeed(int speed);
 		void SetAgent(PathAgent agent);
-		std::vector<Node*> GetPath();
-		bool PathComplete();
-		NodeMap* GetMap();
-		Agent* GetTarget();
 		void SetTarget(Agent* target);
-		glm::vec2 GetPosition();		
-		void Reset();
+		void SetMaxVelocity(float maxVel);
+		void SetVelocity(float vel);
+		void SetMaxForce(glm::vec2 maxFrc);
 		void SetColour(Color colour);
 		void SetStateText(const char* text);
-		const char* GetStateText();
 		Color AgentColour();
-		PathAgent GetAgent();
-		Behaviour* GetBehaviour();		
-		AgentControlType GetType();
-		float GetTimeInBehaviour();
 		void SetTimeInBehaviour(float time);
-		
+
+		bool PathComplete();		
+		void Reset();
 
 	private:
 		PathAgent m_pathAgent;
@@ -59,5 +68,9 @@ namespace AIForGames {
 		const char* m_stateText;
 		AgentControlType m_type;
 		float timeInBehaviour;
+		float MaxVelocity;
+		glm::vec2 MaxForce;
+		glm::vec2 Force;
+		float Velocity;
 	};
 }
